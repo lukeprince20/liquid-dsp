@@ -93,7 +93,7 @@ int ellipkf(float         _k,
         float L = -logf(0.25f*kp);
         K = L + 0.25f*(L-1)*kp*kp;
     } else {
-        float v[_n];
+        float * const v = (float*) alloca(_n*sizeof(float));
         landenf(_k,_n,v);
         K = M_PI * 0.5f;
         unsigned int i;
@@ -107,7 +107,7 @@ int ellipkf(float         _k,
         float L = -logf(_k*0.25f);
         Kp = L + 0.25f*(L-1)*_k*_k;
     } else {
-        float vp[_n];
+        float * const vp = (float*) alloca(_n*sizeof(float));
         landenf(kp,_n,vp);
         Kp = M_PI * 0.5f;
         unsigned int i;
@@ -177,7 +177,7 @@ float complex ellip_cdf(float complex _u,
                         unsigned int  _n)
 {
     float complex wn = ccosf(_u*M_PI*0.5f);
-    float v[_n];
+    float * const v = (float*) alloca(_n*sizeof(float));
     landenf(_k,_n,v);
     unsigned int i;
     for (i=_n; i>0; i--) {
@@ -198,7 +198,7 @@ float complex ellip_snf(float complex _u,
                         unsigned int  _n)
 {
     float complex wn = csinf(_u*M_PI*0.5f);
-    float v[_n];
+    float * const v = (float*) alloca(_n*sizeof(float));
     landenf(_k,_n,v);
     unsigned int i;
     for (i=_n; i>0; i--) {
@@ -219,7 +219,7 @@ float complex ellip_acdf(float complex _w,
                          float         _k,
                          unsigned int  _n)
 {
-    float v[_n];
+    float * const v = (float*) alloca(_n*sizeof(float));
     landenf(_k,_n,v);
     float v1;
 
@@ -331,7 +331,7 @@ int ellip_azpkf(unsigned int    _n,
 
     unsigned int L = (unsigned int)(floorf(N/2.0f)); // 2
     unsigned int r = ((unsigned int)N) % 2;
-    float u[L];
+    float * const u = (float*) alloca(L*sizeof(float));
     unsigned int i;
     for (i=0; i<L; i++) {
         float t = (float)i + 1.0f;
@@ -340,7 +340,7 @@ int ellip_azpkf(unsigned int    _n,
         printf("u[%3u]      : %12.8f\n", i, u[i]);
 #endif
     }
-    float complex zeta[L];
+    float complex * const zeta = (float complex*) alloca(L*sizeof(float complex));
     for (i=0; i<L; i++) {
         zeta[i] = ellip_cdf(u[i],k,n);
 #if LIQUID_DEBUG_ELLIP_PRINT
@@ -349,7 +349,7 @@ int ellip_azpkf(unsigned int    _n,
     }
 
     // compute filter zeros
-    float complex za[L];
+    float complex * const za = (float complex*) alloca(L*sizeof(float complex));
     for (i=0; i<L; i++) {
         za[i] = _Complex_I * Wp / (k*zeta[i]);
 #if LIQUID_DEBUG_ELLIP_PRINT
@@ -362,7 +362,7 @@ int ellip_azpkf(unsigned int    _n,
     printf("v0          : %12.8f + j*%12.8f\n", crealf(v0), cimagf(v0));
 #endif
 
-    float complex pa[L];
+    float complex * const pa = (float complex*) alloca(L*sizeof(float complex));
     for (i=0; i<L; i++) {
         pa[i] = Wp*_Complex_I*ellip_cdf(u[i]-_Complex_I*v0, k, n);
 #if LIQUID_DEBUG_ELLIP_PRINT

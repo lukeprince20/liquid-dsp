@@ -94,8 +94,8 @@ PRESYNC() PRESYNC(_create)(TC *         _v,
     _q->sync_q = (DOTPROD()*) malloc( _q->m*sizeof(DOTPROD()) );
 
     // buffer
-    T vi_prime[_n];
-    T vq_prime[_n];
+    T * const vi_prime = (T*) alloca((_n)*sizeof(T));
+    T * const vq_prime = (T*) alloca((_n)*sizeof(T));
     for (i=0; i<_q->m; i++) {
 
         // generate signal with frequency offset

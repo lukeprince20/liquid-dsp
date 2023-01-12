@@ -66,8 +66,8 @@ int liquid_cplxpair(float complex * _z,
         return liquid_error(LIQUID_EICONFIG,"liquid_cplxpair(), tolerance must be positive");
 
     // keep track of which elements have been paired
-    unsigned char paired[_n];
-    memset(paired,0,sizeof(paired));
+    unsigned char * const paired = (unsigned char*) alloca(_n*sizeof(unsigned char));
+    memset(paired,0,_n*sizeof(unsigned char));
     unsigned int num_pairs=0;
 
     unsigned int i,j,k=0;
@@ -322,7 +322,7 @@ int bilinear_nd(float complex * _b,
     for (i=0; i<na; i++) _ad[i] = 0.;
 
     // temporary polynomial: (1 + 1/z)^(k) * (1 - 1/z)^(n-k)
-    float poly_1pz[na];
+    float * const poly_1pz = (float*) alloca(na*sizeof(float));
 
     float mk=1.0f;
 
@@ -388,7 +388,7 @@ int iirdes_dzpk2tff(float complex * _zd,
                     float *         _a)
 {
     unsigned int i;
-    float complex q[_n+1];
+    float complex * const q = (float complex*) alloca((_n+1)*sizeof(float complex));
 
     // expand poles
     if (polycf_expandroots(_pd,_n,q) != LIQUID_OK)
@@ -430,12 +430,12 @@ int iirdes_dzpk2sosf(float complex * _zd,
     float tol=1e-6f; // tolerance for conjuate pair computation
 
     // find/group complex conjugate pairs (poles)
-    float complex zp[_n];
+    float complex * const zp = (float complex*) alloca(_n*sizeof(float complex));
     if (liquid_cplxpair(_zd,_n,tol,zp) != LIQUID_OK)
         return liquid_error(LIQUID_EINT,"iirdes_dzpk2sosf(), could not associate complex pairs (zeros)");
 
     // find/group complex conjugate pairs (zeros)
-    float complex pp[_n];
+    float complex * const pp = (float complex*) alloca(_n*sizeof(float complex));
     if (liquid_cplxpair(_pd,_n,tol,pp) != LIQUID_OK)
         return liquid_error(LIQUID_EINT,"iirdes_dzpk2sosf(), could not associate complex pairs (poles)");
 
@@ -601,8 +601,8 @@ int liquid_iirdes(liquid_iirdes_filtertype _ftype,
     unsigned int nza;
 
     // analog poles/zeros/gain
-    float complex pa[_n];
-    float complex za[_n];
+    float complex * const pa = (float complex*) alloca(_n*sizeof(float complex));
+    float complex * const za = (float complex*) alloca(_n*sizeof(float complex));
     float complex ka;
     float complex k0 = 1.0f; // nominal digital gain
 
@@ -675,8 +675,8 @@ int liquid_iirdes(liquid_iirdes_filtertype _ftype,
 
     // complex digital poles/zeros/gain
     // NOTE: allocated double the filter order to cover band-pass, band-stop cases
-    float complex zd[2*_n];
-    float complex pd[2*_n];
+    float complex * const zd = (float complex*) alloca(2*_n*sizeof(float complex));
+    float complex * const pd = (float complex*) alloca(2*_n*sizeof(float complex));
     float complex kd;
     float m = iirdes_freqprewarp(_btype,_fc,_f0);
     //printf("m : %12.8f\n", m);
@@ -710,8 +710,8 @@ int liquid_iirdes(liquid_iirdes_filtertype _ftype,
         _btype == LIQUID_IIRDES_BANDSTOP)
     {
         // allocate memory for transformed zeros, poles
-        float complex zd1[2*_n];
-        float complex pd1[2*_n];
+        float complex * const zd1 = (float complex*) alloca(2*_n*sizeof(float complex));
+        float complex * const pd1 = (float complex*) alloca(2*_n*sizeof(float complex));
 
         // run zeros, poles low-pass -> band-pass transform
         iirdes_dzpk_lp2bp(zd, pd,   // low-pass prototype zeros, poles
@@ -783,12 +783,12 @@ int iirdes_isstable(float * _b,
     unsigned int i;
 
     // flip denominator, left to right
-    float a_hat[_n];
+    float * const a_hat = (float*) alloca(_n*sizeof(float));
     for (i=0; i<_n; i++)
         a_hat[i] = _a[_n-i-1];
 
     // compute poles (roots of denominator)
-    float complex roots[_n-1];
+    float complex * const roots = (float complex*) alloca((_n-1)*sizeof(float complex));
     polyf_findroots(a_hat, _n, roots);
 
 #if 0

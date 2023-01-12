@@ -215,7 +215,7 @@ void gradsearch_gradient(utility_function _utility,
                          float *          _gradient)
 {
     // operating point for evaluation
-    float x_prime[_n];
+    float * const x_prime = (float*) alloca((_n)*sizeof(float));
     float u_prime;
 
     // evaluate function at current operating point
@@ -281,7 +281,7 @@ float gradsearch_linesearch(utility_function _utility,
     float dir = _direction == LIQUID_OPTIM_MINIMIZE ? 1.0f : -1.0f;
 
     // test vector, TODO : dynamic allocation?
-    float x_prime[_n];
+    float * const x_prime = (float*) alloca((_n)*sizeof(float));
 
     // run line search
     int continue_running = 1;

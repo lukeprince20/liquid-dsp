@@ -88,8 +88,8 @@ RESAMP() RESAMP(_create)(float        _rate,
 
     // design filter
     unsigned int n = 2*q->m*q->npfb+1;
-    float hf[n];
-    TC h[n];
+    float * const hf = (float*) alloca(n*sizeof(float));
+    TC * const h = (TC*) alloca(n*sizeof(TC));
     liquid_firdes_kaiser(n,q->fc/((float)(q->npfb)),q->as,0.0f,hf);
 
     // normalize filter coefficients by DC gain

@@ -255,7 +255,7 @@ int ASGRAM(_print)(ASGRAM() _q)
 {
     float maxval;
     float maxfreq;
-    char ascii[_q->nfft+1];
+    char * const ascii = (char*) alloca((_q->nfft+1)*sizeof(char));
     ascii[_q->nfft] = '\0'; // append null character to end of string
         
     // execute the spectrogram

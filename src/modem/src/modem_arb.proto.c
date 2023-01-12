@@ -300,8 +300,8 @@ int MODEM(_demodulate_soft_arb)(MODEM()         _q,
     T d;                // distance for this symbol
     TC x_hat;    // re-modulated symbol
 
-    T dmin_0[bps];
-    T dmin_1[bps];
+    T *const dmin_0 = (T*) alloca(bps*sizeof(T));
+    T *const dmin_1 = (T*) alloca(bps*sizeof(T));
     for (k=0; k<bps; k++) {
         dmin_0[k] = 4.0f;
         dmin_1[k] = 4.0f;

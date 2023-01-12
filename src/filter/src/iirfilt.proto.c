@@ -228,15 +228,15 @@ IIRFILT() IIRFILT(_create_prototype)(liquid_iirdes_filtertype _ftype,
 
     // allocate memory for filter coefficients
     unsigned int h_len = (_format == LIQUID_IIRDES_SOS) ? 3*(L+r) : N+1;
-    float B[h_len];
-    float A[h_len];
+    float * const B = (float*) alloca(h_len*sizeof(float));
+    float * const A = (float*) alloca(h_len*sizeof(float));
 
     // design filter (compute coefficients)
     liquid_iirdes(_ftype, _btype, _format, _order, _fc, _f0, _ap, _as, B, A);
 
     // move coefficients to type-specific arrays (e.g. float complex)
-    TC Bc[h_len];
-    TC Ac[h_len];
+    TC * const Bc = (TC*) alloca(h_len*sizeof(TC));
+    TC * const Ac = (TC*) alloca(h_len*sizeof(TC));
     unsigned int i;
     for (i=0; i<h_len; i++) {
         Bc[i] = B[i];
@@ -717,8 +717,8 @@ float IIRFILT(_groupdelay)(IIRFILT() _q,
         // compute group delay from regular transfer function form
 
         // copy coefficients
-        float b[_q->nb];
-        float a[_q->na];
+        float *const b = (float*) alloca(_q->nb*sizeof(float));
+        float *const a = (float*) alloca(_q->na*sizeof(float));
         for (i=0; i<_q->nb; i++) b[i] = crealf(_q->b[i]);
         for (i=0; i<_q->na; i++) a[i] = crealf(_q->a[i]);
         groupdelay = iir_group_delay(b, _q->nb, a, _q->na, _fc);

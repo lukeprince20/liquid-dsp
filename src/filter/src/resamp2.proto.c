@@ -89,7 +89,7 @@ RESAMP2() RESAMP2(_create)(unsigned int _m,
 
     // design filter prototype
     unsigned int i;
-    float hf[q->h_len];
+    float * const hf = (float*) alloca(q->h_len*sizeof(float));
     liquid_firdespm_halfband_as(q->m, q->as, hf);
     for (i=0; i<q->h_len; i++) {
         float t = (float)i - (float)(q->h_len-1)/2.0f;

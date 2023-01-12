@@ -90,7 +90,7 @@ FIRPFBCHR() FIRPFBCHR(_create)(unsigned int _chans,
     unsigned int i;
     unsigned int n;
     unsigned int h_sub_len = 2 * q->m;
-    TC h_sub[h_sub_len];
+    TC * const h_sub = (TC*) alloca(h_sub_len*sizeof(TC));
     for (i=0; i<q->M; i++) {
         // sub-sample prototype filter, loading coefficients
         // in reverse order

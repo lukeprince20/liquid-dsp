@@ -107,7 +107,7 @@ FIRPFBCH() FIRPFBCH(_create)(int          _type,
     // generate bank of sub-samped filters
     unsigned int n;
     unsigned int h_sub_len = q->p;
-    TC h_sub[h_sub_len];
+    TC * const h_sub = (TC*) alloca(h_sub_len*sizeof(TC));
     for (i=0; i<q->num_channels; i++) {
         // sub-sample prototype filter, loading coefficients in reverse order
         for (n=0; n<h_sub_len; n++) {
@@ -157,12 +157,12 @@ FIRPFBCH() FIRPFBCH(_create_kaiser)(int          _type,
 
     // design filter
     unsigned int h_len = 2*_M*_m + 1;
-    float h[h_len];
+    float * const h = (float*) alloca((h_len)*sizeof(float));
     float fc = 0.5f / (float)_M; // TODO : check this value
     liquid_firdes_kaiser(h_len, fc, _as, 0.0f, h);
 
     // copy coefficients to type-specfic array
-    TC hc[h_len];
+    TC * const hc = (TC*) alloca((h_len)*sizeof(TC));
     unsigned int i;
     for (i=0; i<h_len; i++)
         hc[i] = h[i];
@@ -198,7 +198,7 @@ FIRPFBCH() FIRPFBCH(_create_rnyquist)(int          _type,
     
     // design filter based on requested prototype
     unsigned int h_len = 2*_M*_m + 1;
-    float h[h_len];
+    float * const h = (float*) alloca((h_len)*sizeof(float));
     switch (_ftype) {
     case LIQUID_FIRFILT_ARKAISER:
         // root-Nyquist Kaiser (approximate optimum)
@@ -223,7 +223,7 @@ FIRPFBCH() FIRPFBCH(_create_rnyquist)(int          _type,
     // copy coefficients to type-specfic array, reversing order if
     // channelizer is an analyzer, matched filter: g(-t)
     unsigned int g_len = 2*_M*_m;
-    TC gc[g_len];
+    TC * const gc = (TC*) alloca((g_len)*sizeof(TC));
     unsigned int i;
     if (_type == LIQUID_SYNTHESIZER) {
         for (i=0; i<g_len; i++)

@@ -60,11 +60,11 @@ int fec_sumproduct(unsigned int    _m,
 
     // internal variables
     unsigned int num_iterations = 0;
-    float Lq[_m*_n];
-    float Lr[_m*_n];
-    float Lc[_n];
-    float LQ[_n];
-    unsigned char parity[_m];
+    float * const Lq = (float*) alloca((_m*_n)*sizeof(float));
+    float * const Lr = (float*) alloca((_m*_n)*sizeof(float));
+    float * const Lc = (float*) alloca(_n*sizeof(float));
+    float * const LQ = (float*) alloca(_n*sizeof(float));
+    unsigned char * const parity = (unsigned char*) alloca(_m*sizeof(unsigned char));
     unsigned int i;
     unsigned int j;
     int parity_pass;

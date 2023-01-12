@@ -303,12 +303,12 @@ int gmskdem_debug_print(gmskdem      _q,
 
     // plot receive filter response
     fprintf(fid,"ht = zeros(1,2*k*m+1);\n");
-    float ht[_q->h_len];
+    float * const ht = (float*) alloca(_q->h_len*sizeof(float));
     liquid_firdes_gmsktx(_q->k, _q->m, _q->BT, 0.0f, ht);
     for (i=0; i<_q->h_len; i++)
         fprintf(fid,"ht(%4u) = %12.4e;\n", i+1, ht[i]);
 #if GMSKDEM_USE_EQUALIZER
-    float hr[_q->h_len];
+    float * const hr = (float*) alloca(_q->h_len*sizeof(float));
     eqlms_rrrf_get_weights(_q->eq, hr);
     for (i=0; i<_q->h_len; i++)
         fprintf(fid,"hr(%4u) = %12.4e * %u;\n", i+1, hr[i], _q->k);

@@ -701,7 +701,7 @@ int fec_decode_soft(fec _q,
     } else {
         // pack bytes and use hard-decision decoding
         unsigned enc_msg_len = fec_get_enc_msg_length(_q->scheme, _dec_msg_len);
-        unsigned char msg_enc_hard[enc_msg_len];
+        unsigned char * const msg_enc_hard = (unsigned char*) alloca(enc_msg_len*sizeof(unsigned char));
         unsigned int i;
         for (i=0; i<enc_msg_len; i++) {
             // TODO : use pack bytes

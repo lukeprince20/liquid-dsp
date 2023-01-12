@@ -110,12 +110,12 @@ FIRFILT() FIRFILT(_create_kaiser)(unsigned int _n,
 {
 
     // compute temporary array for holding coefficients
-    float hf[_n];
+    float * const hf = (float*) alloca(_n*sizeof(float));
     if (liquid_firdes_kaiser(_n, _fc, _as, _mu, hf) != LIQUID_OK)
         return liquid_error_config("firfilt_%s_create_kaiser(), invalid config", EXTENSION_FULL);
 
     // copy coefficients to type-specific array
-    TC h[_n];
+    TC * const h = (TC*) alloca(_n*sizeof(TC));
     unsigned int i;
     for (i=0; i<_n; i++)
         h[i] = (TC) hf[i];
@@ -138,13 +138,13 @@ FIRFILT() FIRFILT(_create_rnyquist)(int          _type,
 {
     // generate square-root Nyquist filter
     unsigned int h_len = 2*_k*_m + 1;
-    float hf[h_len];
+    float * const hf = (float*) alloca(h_len*sizeof(float));
     if (liquid_firdes_prototype(_type,_k,_m,_beta,_mu,hf) != LIQUID_OK)
         return liquid_error_config("firfilt_%s_create_rnyquist(), invalid configuration", EXTENSION_FULL);
 
     // copy coefficients to type-specific array (e.g. float complex)
     unsigned int i;
-    TC hc[h_len];
+    TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     for (i=0; i<h_len; i++)
         hc[i] = hf[i];
 
@@ -161,14 +161,14 @@ FIRFILT() FIRFILT(_create_firdespm)(unsigned int _h_len,
                                     float        _as)
 {
     // generate square-root Nyquist filter
-    float hf[_h_len];
+    float * const hf = (float*) alloca(_h_len*sizeof(float));
     if (firdespm_lowpass(_h_len,_fc,_as,0,hf) != LIQUID_OK)
         return liquid_error_config("firfilt_%s_create_firdespm(), invalid config", EXTENSION_FULL);
 
     // copy coefficients to type-specific array (e.g. float complex)
     // and scale by filter bandwidth to be consistent with other lowpass prototypes
     unsigned int i;
-    TC hc[_h_len];
+    TC * const hc = (TC*) alloca(_h_len*sizeof(TC));
     for (i=0; i<_h_len; i++)
         hc[i] = hf[i] * 0.5f / _fc;
 
@@ -184,13 +184,13 @@ FIRFILT() FIRFILT(_create_rect)(unsigned int _n)
         return liquid_error_config("firfilt_%s_create_rect(), filter length must be in [1,1024]", EXTENSION_FULL);
 
     // create float array coefficients
-    float hf[_n];
+    float * const hf = (float*) alloca(_n*sizeof(float));
     unsigned int i;
     for (i=0; i<_n; i++)
         hf[i] = 1.0f;
 
     // copy coefficients to type-specific array
-    TC h[_n];
+    TC * const h = (TC*) alloca(_n*sizeof(TC));
     for (i=0; i<_n; i++)
         h[i] = (TC) hf[i];
 
@@ -204,12 +204,12 @@ FIRFILT() FIRFILT(_create_dc_blocker)(unsigned int _m,
 {
     // create float array coefficients and design filter
     unsigned int h_len = 2*_m+1;
-    float        hf[h_len];
+    float * const hf = (float*) alloca(h_len*sizeof(float));
     if (liquid_firdes_notch(_m, 0, _as, hf) != LIQUID_OK)
         return liquid_error_config("firfilt_%s_create_dc_blocker(), invalid config",EXTENSION_FULL);
 
     // copy coefficients to type-specific array
-    TC h[h_len];
+    TC * const h = (TC*) alloca(h_len*sizeof(TC));
     unsigned int i;
     for (i=0; i<h_len; i++)
         h[i] = (TC) hf[i];
@@ -226,8 +226,8 @@ FIRFILT() FIRFILT(_create_notch)(unsigned int _m,
     // create float array coefficients and design filter
     unsigned int i;
     unsigned int h_len = 2*_m+1;    // filter length
-    float        hf[h_len];         // prototype filter with float coefficients
-    TC           h [h_len];         // output filter with type-specific coefficients
+    float * const hf = (float*) alloca(h_len*sizeof(float)); // prototype filter with float coefficients
+    TC * const h = (TC*) alloca(h_len*sizeof(TC)); // output filter with type-specific coefficients
 #if TC_COMPLEX
     // design notch filter as DC blocker, then mix to appropriate frequency
     if (liquid_firdes_notch(_m, 0, _as, hf) != LIQUID_OK)
@@ -534,7 +534,7 @@ float FIRFILT(_groupdelay)(FIRFILT() _q,
                            float     _fc)
 {
     // copy coefficients
-    float h[_q->h_len];
+    float * const h = (float*) alloca(_q->h_len*sizeof(float));
     unsigned int i;
     for (i=0; i<_q->h_len; i++)
         h[i] = crealf(_q->h[i]);

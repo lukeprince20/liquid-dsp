@@ -41,8 +41,8 @@ int POLY(_fit_lagrange)(T *          _x,
         _p[i] = 0.;
 
     // compute roots, gain
-    T roots[k];     // polynomial roots
-    T c[_n];        // expanded polynomial
+    T * const roots = (T*) alloca((k)*sizeof(T));     // polynomial roots
+    T * const c = (T*) alloca((_n)*sizeof(T));        // expanded polynomial
     T g;            // gain
     unsigned int j;
     unsigned int n;

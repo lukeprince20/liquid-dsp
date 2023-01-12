@@ -51,7 +51,7 @@ int POLY(_fit)(T *          _x,
 {
 
     // ...
-    T X[_n*_k];
+    T * const X = (T*) alloca((_n*_k)*sizeof(T));
     unsigned int r,c;
     T v;
     for (r=0; r<_n; r++) {
@@ -63,24 +63,24 @@ int POLY(_fit)(T *          _x,
     }
 
     // compute transpose of X
-    T Xt[_k*_n];
+    T * const Xt = (T*) alloca((_k*_n)*sizeof(T));
     memmove(Xt,X,_k*_n*sizeof(T));
     MATRIX(_trans)(Xt,_n,_k);
 
     // compute [X']*y
-    T Xty[_k];
+    T * const Xty = (T*) alloca((_k)*sizeof(T));
     MATRIX(_mul)(Xt, _k, _n,
                  _y, _n, 1,
                  Xty,_k, 1);
 
     // compute [X']*X
-    T X2[_k*_k];
+    T * const X2 = (T*) alloca((_k*_k)*sizeof(T));
     MATRIX(_mul)(Xt, _k, _n,
                  X,  _n, _k,
                  X2, _k, _k);
 
     // compute inv([X']*X)
-    T G[_k*_k];
+    T * const G = (T*) alloca((_k*_k)*sizeof(T));
     memmove(G,X2,_k*_k*sizeof(T));
     MATRIX(_inv)(G,_k,_k);
 

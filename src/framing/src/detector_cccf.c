@@ -155,7 +155,7 @@ detector_cccf detector_cccf_create(float complex * _s,
     q->rxy1 = (float*)        malloc((q->m)*sizeof(float));
     q->rxy  = (float*)        malloc((q->m)*sizeof(float));
     unsigned int k;
-    float complex sconj[q->n];
+    float complex * const sconj = (float complex*) alloca(q->n*sizeof(float complex));
     for (k=0; k<q->m; k++) {
         // pre-spin sequence (slightly over-sampled in frequency)
         q->dphi[k] = ((float)k - (float)(q->m-1)/2) * q->dphi_step;

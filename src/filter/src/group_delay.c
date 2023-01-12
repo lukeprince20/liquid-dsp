@@ -82,7 +82,7 @@ float iir_group_delay(float *      _b,
     // compute c = conv(b,fliplr(a))
     //         c(z) = b(z)*a(1/z)*z^(-_na)
     unsigned int nc = _na + _nb - 1;
-    float c[nc];
+    float * const c = (float*) alloca(nc*sizeof(float));
     unsigned int i,j;
     for (i=0; i<nc; i++)
         c[i] = 0.0;

@@ -139,9 +139,9 @@ int fpoly_bessel_roots_orchard(unsigned int    _n,
                                float complex * _roots)
 {
     // initialize arrays
-    float complex r0[_n];       // roots of L_{k-2}
-    float complex r1[_n];       // roots of L_{k-1}
-    float complex r_hat[_n];    // roots of L_{k}
+    float complex * const r0 = (float complex*) alloca(_n*sizeof(float complex));    // roots of L_{k-2}
+    float complex * const r1 = (float complex*) alloca(_n*sizeof(float complex));    // roots of L_{k-1}
+    float complex * const r_hat = (float complex*) alloca(_n*sizeof(float complex)); // roots of L_{k}
 
     unsigned int i, j;
     unsigned int p, L;

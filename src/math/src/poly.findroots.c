@@ -49,8 +49,8 @@ int liquid_poly_findroots_durandkerner(double *         _p,
 
     unsigned int i;
     unsigned int num_roots = _k-1;
-    double r0[num_roots];
-    double r1[num_roots];
+    double * const r0 = (double*) alloca((num_roots)*sizeof(double));
+    double * const r1 = (double*) alloca((num_roots)*sizeof(double));
 
     // find initial magnitude
     float g     = 0.0f;
@@ -124,8 +124,8 @@ int liquid_poly_findroots_bairstow(double *         _p,
                                    unsigned int     _k,
                                    double complex * _roots)
 {
-    double p0[_k];       // buffer 0
-    double p1[_k];       // buffer 1
+    double * const p0 = (double*) alloca((_k)*sizeof(double)); // buffer 0
+    double * const p1 = (double*) alloca((_k)*sizeof(double)); // buffer 1
     double * p   = NULL; // input polynomial
     double * pr  = NULL; // output (reduced) polynomial
 
@@ -229,8 +229,8 @@ int liquid_poly_findroots_bairstow_recursion(double *     _p,
     double du, dv;
 
     // reduced polynomials
-    double b[_k];
-    double f[_k];
+    double * const b = (double*) alloca((_k)*sizeof(double));
+    double * const f = (double*) alloca((_k)*sizeof(double));
     b[n] = b[n-1] = 0;
     f[n] = f[n-1] = 0;
 

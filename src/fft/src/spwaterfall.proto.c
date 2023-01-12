@@ -399,7 +399,7 @@ int SPWATERFALL(_export_bin)(SPWATERFALL() _q,
 {
     // add '.bin' extension to base
     int n = strlen(_base);
-    char filename[n+5];
+    char * const filename = (char*) alloca((n+5)*sizeof(char));
     sprintf(filename,"%s.bin", _base);
 
     // open output file for writing
@@ -443,7 +443,7 @@ int SPWATERFALL(_export_gnu)(SPWATERFALL() _q,
 {
     // add '.bin' extension to base
     int n = strlen(_base);
-    char filename[n+5];
+    char * const filename = (char*) alloca((n+5)*sizeof(char));
     sprintf(filename,"%s.gnu", _base);
 
     // open output file for writing

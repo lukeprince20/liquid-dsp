@@ -171,7 +171,7 @@ gmskframesync gmskframesync_create_set(unsigned int       _k,
     q->preamble_len = 63;
     q->preamble_pn = (float*)malloc(q->preamble_len*sizeof(float));
     q->preamble_rx = (float*)malloc(q->preamble_len*sizeof(float));
-    float complex preamble_samples[q->preamble_len*q->k];
+    float complex * const preamble_samples = (float complex*) alloca((q->preamble_len*q->k)*sizeof(float complex));
     msequence ms = msequence_create(6, 0x6d, 1);
     gmskmod mod = gmskmod_create(q->k, q->m, q->BT);
 

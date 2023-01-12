@@ -35,6 +35,25 @@
 // Configuration file
 #include "config.h"
 
+// define a working alloca
+#include <stdlib.h>
+#include <stddef.h>
+#ifdef HAVE_ALLOCA_H
+#   include <alloca.h>
+#elif !defined alloca
+#   ifdef __GNUC__
+#       define alloca __builtin_alloca
+#   elif defined _MSC_VER
+#       include <malloc.h>
+#       define alloca _alloca
+#   elif !defined HAVE_ALLOCA
+#       ifdef  __cplusplus
+extern "C"
+#       endif
+void *alloca (size_t);
+#   endif
+#endif
+
 #include <stdarg.h>
 #include <complex.h>
 #include "liquid.h"

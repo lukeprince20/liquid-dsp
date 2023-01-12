@@ -143,6 +143,9 @@ check_symbol_exists(free "stdlib.h" HAVE_FREE)
 check_symbol_exists(memset "string.h" HAVE_MEMSET)
 check_symbol_exists(memmove "string.h" HAVE_MEMMOVE)
 
+include(CheckAlloca)
+check_alloca(HAVE_ALLOCA_H HAVE_ALLOCA)
+
 foreach(have_symbol HAVE_MALLOC HAVE_REALLOC HAVE_FREE HAVE_MEMSET HAVE_MEMMOVE)
   if(NOT ${have_symbol})
     message(FATAL_ERROR "${have_symbol} required.")

@@ -631,7 +631,7 @@ float liquid_filter_energy(float *      _h,
     }
 
     // allocate memory for complex phasor
-    float complex expjwt[_h_len];
+    float complex * const expjwt = (float complex*) alloca(_h_len*sizeof(float complex));
 
     // initialize accumulators
     float e_total = 0.0f;       // total energy

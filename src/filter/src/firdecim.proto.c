@@ -96,12 +96,12 @@ FIRDECIM() FIRDECIM(_create_kaiser)(unsigned int _M,
 
     // compute filter coefficients (floating point precision)
     unsigned int h_len = 2*_M*_m + 1;
-    float hf[h_len];
+    float * const hf = (float*) alloca(h_len*sizeof(float));
     float fc = 0.5f / (float) (_M);
     liquid_firdes_kaiser(h_len, fc, _as, 0.0f, hf);
 
     // copy coefficients to type-specific array (e.g. float complex)
-    TC hc[h_len];
+    TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     unsigned int i;
     for (i=0; i<h_len; i++)
         hc[i] = hf[i];
@@ -134,13 +134,13 @@ FIRDECIM() FIRDECIM(_create_prototype)(int          _type,
 
     // generate square-root Nyquist filter
     unsigned int h_len = 2*_M*_m + 1;
-    float h[h_len];
+    float * const h = (float*) alloca(h_len*sizeof(float));
     if (liquid_firdes_prototype(_type,_M,_m,_beta,_dt,h) != LIQUID_OK)
         return liquid_error_config("decim_%s_create_prototype(), could not design internal filter", EXTENSION_FULL);
 
     // copy coefficients to type-specific array (e.g. float complex)
     unsigned int i;
-    TC hc[h_len];
+    TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     for (i=0; i<h_len; i++)
         hc[i] = h[i];
 

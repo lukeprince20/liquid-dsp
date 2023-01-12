@@ -300,7 +300,7 @@ float FIRFARROW(_groupdelay)(FIRFARROW() _q,
                              float _fc)
 {
     // copy coefficients to be in correct order
-    float h[_q->h_len];
+    float * const h = (float*) alloca(_q->h_len*sizeof(float));
     unsigned int i;
     unsigned int n = _q->h_len;
     for (i=0; i<n; i++)
@@ -321,9 +321,9 @@ int FIRFARROW(_genpoly)(FIRFARROW() _q)
     // TODO : shy away from 'float' and use 'TC' types
     unsigned int i, j, n=0;
     float x, mu, h0, h1;
-    float mu_vect[_q->Q+1];
-    float hp_vect[_q->Q+1];
-    float p[_q->Q+1];
+    float * const mu_vect = (float*) alloca((_q->Q+1)*sizeof(float));
+    float * const hp_vect = (float*) alloca((_q->Q+1)*sizeof(float));
+    float * const p = (float*) alloca((_q->Q+1)*sizeof(float));
     float beta = kaiser_beta_As(_q->as);
     for (i=0; i<_q->h_len; i++) {
 #if FIRFARROW_DEBUG

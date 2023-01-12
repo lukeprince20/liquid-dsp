@@ -181,7 +181,7 @@ int liquid_kbd_window(unsigned int _i,
 
     // generate regular Kaiser window, length M+1
     unsigned int i;
-    float w_kaiser[M+1];
+    float * const w_kaiser = (float*) alloca((M+1)*sizeof(float));
     for (i=0; i<=M; i++)
         w_kaiser[i] = liquid_kaiser(i,M+1,_beta);
 

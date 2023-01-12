@@ -39,7 +39,7 @@ int MATRIX(_inv)(T * _X, unsigned int _XR, unsigned int _XC)
     //  xn1 xn2 ... xnn
 
     // allocate temporary memory
-    T x[2*_XR*_XC];
+    T * const x = (T*) alloca((2*_XR*_XC)*sizeof(T));
     unsigned int xr = _XR;
     unsigned int xc = _XC*2;
 

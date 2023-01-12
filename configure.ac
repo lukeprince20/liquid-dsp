@@ -105,6 +105,7 @@ AC_PROG_RANLIB
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
+AC_FUNC_ALLOCA
 
 # AC_CHECK_LIB (library, function, [action-if-found], [action-if-not-found], [other-libraries])
 AC_CHECK_LIB([c],[main],[],[AC_MSG_ERROR(Could not use standard C library)],   [])

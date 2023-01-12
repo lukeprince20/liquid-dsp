@@ -924,11 +924,11 @@ int ofdmframesync_estimate_eqgain_poly(ofdmframesync _q,
     unsigned int N = _q->M_pilot + _q->M_data;
     if (_order > N-1) _order = N-1;
     if (_order > 10)  _order = 10;
-    float x_freq[N];
-    float y_abs[N];
-    float y_arg[N];
-    float p_abs[_order+1];
-    float p_arg[_order+1];
+    float * const x_freq = (float*) alloca((N)*sizeof(float));
+    float * const y_abs = (float*) alloca((N)*sizeof(float));
+    float * const y_arg = (float*) alloca((N)*sizeof(float));
+    float * const p_abs = (float*) alloca((_order+1)*sizeof(float));
+    float * const p_arg = (float*) alloca((_order+1)*sizeof(float));
 
     unsigned int n=0;
     unsigned int k;
@@ -999,8 +999,8 @@ int ofdmframesync_rxsymbol(ofdmframesync _q)
         _q->X[i] *= _q->R[i];
 
     // polynomial curve-fit
-    float x_phase[_q->M_pilot];
-    float y_phase[_q->M_pilot];
+    float * const x_phase = (float*) alloca((_q->M_pilot)*sizeof(float));
+    float * const y_phase = (float*) alloca((_q->M_pilot)*sizeof(float));
     float p_phase[2];
 
     unsigned int n=0;
