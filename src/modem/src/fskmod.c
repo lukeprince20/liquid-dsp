@@ -131,7 +131,7 @@ int fskmod_reset(fskmod _q)
 //  _y      :   output sample array [size: _k x 1]
 int fskmod_modulate(fskmod          _q,
                     unsigned int    _s,
-                    float complex * _y)
+                    liquid_float_complex * _y)
 {
     // validate input
     if (_s >= _q->M)

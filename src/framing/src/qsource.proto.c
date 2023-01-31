@@ -49,9 +49,9 @@ struct QSOURCE(_s)
     float           gain;       // signal gain (user defined)
     float           gain_ch;    // channelizer gain
     unsigned int    buf_len;    // temporary buffer for resampler output
-    float complex * buf;        // sample buffer (resamp output), [size: buf_len x 1]
-    float complex * buf_time;   // channelizer input buffer, [size: P/2 x 1]
-    float complex * buf_freq;   // channelizer input buffer, [size: P   x 1]
+    liquid_float_complex * buf;        // sample buffer (resamp output), [size: buf_len x 1]
+    liquid_float_complex * buf_time;   // channelizer input buffer, [size: P/2 x 1]
+    liquid_float_complex * buf_freq;   // channelizer input buffer, [size: P   x 1]
     firpfbch2_crcf  ch;         // analysis channelizer
     int             enabled;    // signal enabled?
     uint64_t        num_samples;// total number of output samples generated
@@ -75,8 +75,8 @@ struct QSOURCE(_s)
         struct { NCO() nco; float df; int negate, single; uint64_t num, timer; } chirp;
         struct { } noise;
         struct { SYMSTREAM() symstream; } linmod;
-        struct { fskmod mod; float complex * buf; unsigned int len, index, mask; } fsk;
-        struct { gmskmod mod; float complex buf[2]; int index; } gmsk;
+        struct { fskmod mod; liquid_float_complex * buf; unsigned int len, index, mask; } fsk;
+        struct { gmskmod mod; liquid_float_complex buf[2]; int index; } gmsk;
     } source;
 };
 
@@ -127,9 +127,9 @@ QSOURCE() QSOURCE(_create)(unsigned int _M,
 
     // create buffers
     q->buf_len  = 64;
-    q->buf      = (float complex*) malloc(q->buf_len * sizeof(float complex));
-    q->buf_time = (float complex*) malloc(q->P/2     * sizeof(float complex));
-    q->buf_freq = (float complex*) malloc(q->P       * sizeof(float complex));
+    q->buf      = (liquid_float_complex*) malloc(q->buf_len * sizeof(liquid_float_complex));
+    q->buf_time = (liquid_float_complex*) malloc(q->P/2     * sizeof(liquid_float_complex));
+    q->buf_freq = (liquid_float_complex*) malloc(q->P       * sizeof(liquid_float_complex));
 
     // create channelizer
     q->ch = firpfbch2_crcf_create_kaiser(LIQUID_ANALYZER, q->P, q->m, q->as);
@@ -156,9 +156,9 @@ QSOURCE() QSOURCE(_copy)(QSOURCE() q_orig)
     // copy main objects
     q_copy->resamp   = resamp_crcf_copy(q_orig->resamp);
     q_copy->mixer    = nco_crcf_copy   (q_orig->mixer);
-    q_copy->buf      = (float complex*) liquid_malloc_copy(q_orig->buf,      q_orig->buf_len, sizeof(float complex));
-    q_copy->buf_time = (float complex*) liquid_malloc_copy(q_orig->buf_time, q_orig->P/2,     sizeof(float complex));
-    q_copy->buf_freq = (float complex*) liquid_malloc_copy(q_orig->buf_freq, q_orig->P,       sizeof(float complex));
+    q_copy->buf      = (liquid_float_complex*) liquid_malloc_copy(q_orig->buf,      q_orig->buf_len, sizeof(liquid_float_complex));
+    q_copy->buf_time = (liquid_float_complex*) liquid_malloc_copy(q_orig->buf_time, q_orig->P/2,     sizeof(liquid_float_complex));
+    q_copy->buf_freq = (liquid_float_complex*) liquid_malloc_copy(q_orig->buf_freq, q_orig->P,       sizeof(liquid_float_complex));
     q_copy->ch       = firpfbch2_crcf_copy(q_orig->ch);
 
     // copy type-specific values
@@ -176,8 +176,8 @@ QSOURCE() QSOURCE(_copy)(QSOURCE() q_orig)
         break;
     case QSOURCE_FSK:
         q_copy->source.fsk.mod = fskmod_copy(q_orig->source.fsk.mod);
-        q_copy->source.fsk.buf = (float complex*)liquid_malloc_copy(
-            q_orig->source.fsk.buf, q_orig->source.fsk.len, sizeof(float complex));
+        q_copy->source.fsk.buf = (liquid_float_complex*)liquid_malloc_copy(
+            q_orig->source.fsk.buf, q_orig->source.fsk.len, sizeof(liquid_float_complex));
         break;
     case QSOURCE_GMSK:
         q_copy->source.gmsk.mod = gmskmod_copy(q_orig->source.gmsk.mod);
@@ -296,7 +296,7 @@ int QSOURCE(_init_fsk)(QSOURCE()    _q,
     _q->type            = QSOURCE_FSK;
     _q->source.fsk.mod  = fskmod_create(_m, _k, 0.25f);
     _q->source.fsk.len  = _k;   // buffer length
-    _q->source.fsk.buf  = (float complex*)malloc(_k*sizeof(float complex));
+    _q->source.fsk.buf  = (liquid_float_complex*)malloc(_k*sizeof(liquid_float_complex));
     _q->source.fsk.mask = (1 << _m) - 1;
     _q->source.fsk.index= 0;
     return LIQUID_OK;

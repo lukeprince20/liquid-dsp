@@ -141,7 +141,7 @@ int gmskmod_reset(gmskmod _q)
 
 int gmskmod_modulate(gmskmod         _q,
                      unsigned int    _s,
-                     float complex * _y)
+                     liquid_float_complex * _y)
 {
     // generate sample from symbol
     float x = _s==0 ? -_q->k_inv : _q->k_inv;

@@ -25,7 +25,7 @@
 //
 
 // create arbitrary digital modem object
-MODEM() MODEM(_create_arbitrary)(float complex * _table,
+MODEM() MODEM(_create_arbitrary)(liquid_float_complex * _table,
                                  unsigned int    _M)
 {
     // strip out bits/symbol
@@ -186,7 +186,7 @@ MODEM() MODEM(_create_arb64vt)()
 //  _symbol_map :   arbitrary modem symbol map
 //  _len        :   number of symbols in the map
 int MODEM(_arb_init)(MODEM()         _q,
-                     float complex * _symbol_map,
+                     liquid_float_complex * _symbol_map,
                      unsigned int    _len)
 {
 #ifdef LIQUID_VALIDATE_INPUT

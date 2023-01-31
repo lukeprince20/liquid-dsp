@@ -51,7 +51,7 @@ struct fskframegen_s {
     unsigned int    M;                  // modulator constellation size, M=2^m
     fskmod          mod_header;         // modulator object for the header (BFSK)
     fskmod          mod;                // modulator object (M-FSK)
-    float complex * buf;                // modulator transmit buffer [size: k x 1]
+    liquid_float_complex * buf;                // modulator transmit buffer [size: k x 1]
 
     // preamble
     unsigned int    preamble_sym_len;   // preamble symbols length
@@ -123,7 +123,7 @@ fskframegen fskframegen_create()
     // create modulators
     q->mod_header = fskmod_create(   1, q->k, q->bandwidth);
     q->mod        = fskmod_create(q->m, q->k, q->bandwidth);
-    q->buf        = (float complex*) malloc( q->k * sizeof(float complex) );
+    q->buf        = (liquid_float_complex*) malloc( q->k * sizeof(liquid_float_complex) );
 
     // preamble symbols (over-sampled by 2)
     msequence preamble_ms = msequence_create(6, 0x6d, 1);
@@ -352,7 +352,7 @@ unsigned int fskframegen_getframelen(fskframegen _q)
 
 // write sample to output buffer
 int fskframegen_write_samples(fskframegen     _q,
-                              float complex * _buf,
+                              liquid_float_complex * _buf,
                               unsigned int    _buf_len)
 {
     unsigned int i;

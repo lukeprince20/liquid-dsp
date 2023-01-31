@@ -37,7 +37,7 @@
 #define FFT(name)           LIQUID_CONCAT(fft,name)
 
 #define T                   float           // primitive type (real)
-#define TC                  float complex   // primitive type (complex)
+#define TC                  liquid_float_complex   // primitive type (complex)
 #define TI                  float           // input type
 
 #define TI_COMPLEX          0

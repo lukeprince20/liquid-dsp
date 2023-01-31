@@ -96,7 +96,7 @@ FIRINTERP() FIRINTERP(_create_kaiser)(unsigned int _interp,
     float fc = 0.5f / (float) (_interp);
     liquid_firdes_kaiser(h_len, fc, _as, 0.0f, hf);
 
-    // copy coefficients to type-specific array (e.g. float complex)
+    // copy coefficients to type-specific array (e.g. liquid_float_complex)
     TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     unsigned int i;
     for (i=0; i<h_len; i++)
@@ -133,7 +133,7 @@ FIRINTERP() FIRINTERP(_create_prototype)(int          _type,
     float * const h = (float*) alloca(h_len*sizeof(float));
     liquid_firdes_prototype(_type,_interp,_m,_beta,_dt,h);
 
-    // copy coefficients to type-specific array (e.g. float complex)
+    // copy coefficients to type-specific array (e.g. liquid_float_complex)
     unsigned int i;
     TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     for (i=0; i<h_len; i++)

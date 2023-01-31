@@ -39,11 +39,11 @@
 
 // reconfigure internal properties
 int           flexframegen_reconfigure      (flexframegen _q);
-float complex flexframegen_generate_symbol  (flexframegen _q);
-float complex flexframegen_generate_preamble(flexframegen _q);
-float complex flexframegen_generate_header  (flexframegen _q);
-float complex flexframegen_generate_payload (flexframegen _q);
-float complex flexframegen_generate_tail    (flexframegen _q);
+liquid_float_complex flexframegen_generate_symbol  (flexframegen _q);
+liquid_float_complex flexframegen_generate_preamble(flexframegen _q);
+liquid_float_complex flexframegen_generate_header  (flexframegen _q);
+liquid_float_complex flexframegen_generate_payload (flexframegen _q);
+liquid_float_complex flexframegen_generate_tail    (flexframegen _q);
 
 // default flexframegen properties
 static flexframegenprops_s flexframegenprops_default = {
@@ -72,13 +72,13 @@ struct flexframegen_s {
     unsigned int    m;                  // interp filter delay (symbols)
     float           beta;               // excess bandwidth factor
     firinterp_crcf  interp;             // interpolator object
-    float complex   buf_interp[2];      // output interpolator buffer [size: k x 1]
+    liquid_float_complex   buf_interp[2];      // output interpolator buffer [size: k x 1]
 
     flexframegenprops_s props;          // payload properties
     flexframegenprops_s header_props;   // header properties
 
     // preamble
-    float complex * preamble_pn;        // p/n sequence
+    liquid_float_complex * preamble_pn;        // p/n sequence
 
     // header
     unsigned char * header;             // header data
@@ -86,16 +86,16 @@ struct flexframegen_s {
     unsigned int    header_dec_len;     // header length (decoded)
     qpacketmodem    header_encoder;     // header encoder/modulator
     unsigned int    header_mod_len;     // header length (encoded/modulated)
-    float complex * header_mod;         // header symbols (encoded/modulated)
+    liquid_float_complex * header_mod;         // header symbols (encoded/modulated)
     qpilotgen       header_pilotgen;    // header pilot symbol generator
     unsigned int    header_sym_len;     // header length (pilots added)
-    float complex * header_sym;         // header symbols (pilots added)
+    liquid_float_complex * header_sym;         // header symbols (pilots added)
 
     // payload
     unsigned int    payload_dec_len;    // length of decoded
     qpacketmodem    payload_encoder;    // packet encoder/modulator
     unsigned int    payload_sym_len;    // length of encoded/modulated payload
-    float complex * payload_sym;        // encoded payload symbols
+    liquid_float_complex * payload_sym;        // encoded payload symbols
 
     // counters/states
     unsigned int    symbol_counter;     // output symbol number
@@ -122,7 +122,7 @@ flexframegen flexframegen_create(flexframegenprops_s * _fgprops)
     q->interp = firinterp_crcf_create_prototype(LIQUID_FIRFILT_ARKAISER,q->k,q->m,q->beta,0);
 
     // generate pn sequence
-    q->preamble_pn = (float complex *) malloc(64*sizeof(float complex));
+    q->preamble_pn = (liquid_float_complex *) malloc(64*sizeof(liquid_float_complex));
     msequence ms = msequence_create(7, 0x0089, 1);
     for (i=0; i<64; i++) {
         q->preamble_pn[i] = (msequence_advance(ms) ? M_SQRT1_2 : -M_SQRT1_2);
@@ -145,7 +145,7 @@ flexframegen flexframegen_create(flexframegenprops_s * _fgprops)
     q->payload_encoder = qpacketmodem_create();
     q->payload_dec_len = 64;
     q->payload_sym_len = qpacketmodem_get_frame_len(q->payload_encoder);
-    q->payload_sym     = (float complex *) malloc( q->payload_sym_len*sizeof(float complex));
+    q->payload_sym     = (liquid_float_complex *) malloc( q->payload_sym_len*sizeof(liquid_float_complex));
 
     // set payload properties
     flexframegen_setprops(q, _fgprops);
@@ -283,7 +283,7 @@ int flexframegen_set_header_len(flexframegen   _q,
                            _q->header_props.fec1,
                            _q->header_props.mod_scheme);
     _q->header_mod_len = qpacketmodem_get_frame_len(_q->header_encoder);
-    _q->header_mod     = (float complex *) realloc(_q->header_mod, _q->header_mod_len*sizeof(float complex));
+    _q->header_mod     = (liquid_float_complex *) realloc(_q->header_mod, _q->header_mod_len*sizeof(liquid_float_complex));
 
     // create header pilot sequence generator
     if (_q->header_pilotgen) {
@@ -291,7 +291,7 @@ int flexframegen_set_header_len(flexframegen   _q,
     }
     _q->header_pilotgen = qpilotgen_create(_q->header_mod_len, 16);
     _q->header_sym_len  = qpilotgen_get_frame_len(_q->header_pilotgen);
-    _q->header_sym      = (float complex *) realloc(_q->header_sym, _q->header_sym_len*sizeof(float complex));
+    _q->header_sym      = (liquid_float_complex *) realloc(_q->header_sym, _q->header_sym_len*sizeof(liquid_float_complex));
     //printf("header: %u bytes > %u mod > %u sym\n", 64, _q->header_mod_len, _q->header_sym_len);
     return LIQUID_OK;
 }
@@ -404,7 +404,7 @@ int flexframegen_assemble(flexframegen          _q,
 //  _buffer     :   output buffer [size: _buffer_len x 1]
 //  _buffer_len :   output buffer length
 int flexframegen_write_samples(flexframegen    _q,
-                               float complex * _buffer,
+                               liquid_float_complex * _buffer,
                                unsigned int    _buffer_len)
 {
     unsigned int i;
@@ -412,7 +412,7 @@ int flexframegen_write_samples(flexframegen    _q,
         // determine if new sample needs to be written
         if (_q->sample_counter == 0) {
             // generate new symbol
-            float complex sym = flexframegen_generate_symbol(_q);
+            liquid_float_complex sym = flexframegen_generate_symbol(_q);
 
             // interpolate result
             firinterp_crcf_execute(_q->interp, sym, _q->buf_interp);
@@ -445,8 +445,8 @@ int flexframegen_reconfigure(flexframegen _q)
 
     // re-allocate memory for encoded message
     _q->payload_sym_len = qpacketmodem_get_frame_len(_q->payload_encoder);
-    _q->payload_sym = (float complex*) realloc(_q->payload_sym,
-                                               _q->payload_sym_len*sizeof(float complex));
+    _q->payload_sym = (liquid_float_complex*) realloc(_q->payload_sym,
+                                               _q->payload_sym_len*sizeof(liquid_float_complex));
 
     // ensure payload was reallocated appropriately
     if (_q->payload_sym == NULL)
@@ -456,7 +456,7 @@ int flexframegen_reconfigure(flexframegen _q)
 }
 
 // fill interpolator buffer
-float complex flexframegen_generate_symbol(flexframegen _q)
+liquid_float_complex flexframegen_generate_symbol(flexframegen _q)
 {
     // write zeros to buffer if frame is not assembled
     if (!_q->frame_assembled)
@@ -475,9 +475,9 @@ float complex flexframegen_generate_symbol(flexframegen _q)
 }
 
 // generate preamble
-float complex flexframegen_generate_preamble(flexframegen _q)
+liquid_float_complex flexframegen_generate_preamble(flexframegen _q)
 {
-    float complex symbol = _q->preamble_pn[_q->symbol_counter++];
+    liquid_float_complex symbol = _q->preamble_pn[_q->symbol_counter++];
 
     // check state
     if (_q->symbol_counter == 64) {
@@ -488,9 +488,9 @@ float complex flexframegen_generate_preamble(flexframegen _q)
 }
 
 // generate header
-float complex flexframegen_generate_header(flexframegen _q)
+liquid_float_complex flexframegen_generate_header(flexframegen _q)
 {
-    float complex symbol = _q->header_sym[_q->symbol_counter++];
+    liquid_float_complex symbol = _q->header_sym[_q->symbol_counter++];
 
     // check state
     if (_q->symbol_counter == _q->header_sym_len) {
@@ -501,9 +501,9 @@ float complex flexframegen_generate_header(flexframegen _q)
 }
 
 // generate payload
-float complex flexframegen_generate_payload(flexframegen _q)
+liquid_float_complex flexframegen_generate_payload(flexframegen _q)
 {
-    float complex symbol = _q->payload_sym[_q->symbol_counter++];
+    liquid_float_complex symbol = _q->payload_sym[_q->symbol_counter++];
 
     // check state
     if (_q->symbol_counter == _q->payload_sym_len) {
@@ -514,7 +514,7 @@ float complex flexframegen_generate_payload(flexframegen _q)
 }
 
 // generate tail
-float complex flexframegen_generate_tail(flexframegen _q)
+liquid_float_complex flexframegen_generate_tail(flexframegen _q)
 {
     // increment symbol counter
     _q->symbol_counter++;

@@ -209,10 +209,10 @@ unsigned int TVMPCH(_get_length)(TVMPCH() _q)
 //  _H      :   output frequency response
 int TVMPCH(_freqresponse)(TVMPCH()        _q,
                           float           _fc,
-                          float complex * _H)
+                          liquid_float_complex * _H)
 {
     unsigned int i;
-    float complex H = 0.0f;
+    liquid_float_complex H = 0.0f;
 
     // compute dot product between coefficients and exp{ 2 pi fc {0..n-1} }
     for (i=0; i<_q->h_len; i++)

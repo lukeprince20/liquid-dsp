@@ -370,7 +370,7 @@ int SYMTRACK(_execute)(SYMTRACK()     _q,
         // update equalizer independent of the signal: estimate error
         // assuming constant modulus signal
         // TODO: check lock conditions of previous object to determine when to run equalizer
-        float complex d_prime = 0.0f;
+        liquid_float_complex d_prime = 0.0f;
         if (_q->num_syms_rx > 200 && _q->eq_strategy != SYMTRACK_EQ_OFF) {
             switch (_q->eq_strategy) {
             case SYMTRACK_EQ_CM: d_prime = d_hat/cabsf(d_hat); break;

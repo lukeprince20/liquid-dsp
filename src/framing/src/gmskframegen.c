@@ -86,8 +86,8 @@ struct gmskframegen_s {
     unsigned int symbol_counter;//
 
     // output sample buffer (one symbol's worth of data)
-    complex float * buf_sym;    // size: k x 1
-    unsigned int    buf_idx;    // output sample buffer index
+    liquid_float_complex * buf_sym;    // size: k x 1
+    unsigned int           buf_idx;    // output sample buffer index
 };
 
 // create gmskframegen object
@@ -141,7 +141,7 @@ gmskframegen gmskframegen_create_set(unsigned int _k,
     q->payload_enc = (unsigned char*) malloc(q->enc_msg_len*sizeof(unsigned char));
 
     // allocate memory for symbols
-    q->buf_sym = (float complex*)malloc(q->k*sizeof(float complex));
+    q->buf_sym = (liquid_float_complex*)malloc(q->k*sizeof(liquid_float_complex));
 
     // reset object and return
     gmskframegen_reset(q);
@@ -357,7 +357,7 @@ int gmskframegen_gen_symbol(gmskframegen _q)
 //  _buf            :   output buffer [size: _buf_len x 1]
 //  _buf_len        :   output buffer length
 int gmskframegen_write(gmskframegen   _q,
-                      float complex * _buf,
+                      liquid_float_complex * _buf,
                       unsigned int    _buf_len)
 {
     unsigned int i;
@@ -376,7 +376,7 @@ int gmskframegen_write(gmskframegen   _q,
 //  _q      :   frame generator object
 //  _buf    :   output buffer [size: _buf_len x 1]
 int gmskframegen_write_samples(gmskframegen    _q,
-                               float complex * _buf)
+                               liquid_float_complex * _buf)
 {
     return gmskframegen_write(_q, _buf, _q->k);
 }
@@ -428,7 +428,7 @@ int gmskframegen_encode_header(gmskframegen          _q,
 
 int gmskframegen_write_zeros(gmskframegen _q)
 {
-    memset(_q->buf_sym, 0x0, _q->k*sizeof(float complex));
+    memset(_q->buf_sym, 0x0, _q->k*sizeof(liquid_float_complex));
     return LIQUID_OK;
 }
 

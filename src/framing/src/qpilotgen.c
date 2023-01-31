@@ -55,7 +55,7 @@ struct qpilotgen_s {
     unsigned int    pilot_spacing;  // spacing between pilot symbols
     unsigned int    num_pilots;     // total number of pilot symbols
     unsigned int    frame_len;      // total number of frame symbols
-    float complex * pilots;         // pilot sequence
+    liquid_float_complex * pilots;         // pilot sequence
 };
 
 // create packet encoder
@@ -82,7 +82,7 @@ qpilotgen qpilotgen_create(unsigned int _payload_len,
     q->frame_len  = q->payload_len + q->num_pilots;
 
     // allocate memory for pilots
-    q->pilots = (float complex*) malloc(q->num_pilots*sizeof(float complex));
+    q->pilots = (liquid_float_complex*) malloc(q->num_pilots*sizeof(liquid_float_complex));
 
     // find appropriate sequence size
     unsigned int m = liquid_nextpow2(q->num_pilots);
@@ -162,8 +162,8 @@ unsigned int qpilotgen_get_frame_len(qpilotgen _q)
 // TODO: include method with just symbol indices? would be useful for
 //       non-linear modulation types
 int qpilotgen_execute(qpilotgen       _q,
-                      float complex * _payload,
-                      float complex * _frame)
+                      liquid_float_complex * _payload,
+                      liquid_float_complex * _frame)
 {
     unsigned int i;
     unsigned int n = 0;

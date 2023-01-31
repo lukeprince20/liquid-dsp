@@ -65,8 +65,8 @@ int liquid_firdes_fnyquist(liquid_firfilt_type _type,
     unsigned int h_len = 2*_k*_m+1;   // filter length
 
     float * const H_prime = (float*) alloca(h_len*sizeof(float)); // frequency response of Nyquist filter (real)
-    float complex * const H = (float complex*) alloca(h_len * sizeof(float complex)); // frequency response of Nyquist filter
-    float complex * const h = (float complex*) alloca(h_len * sizeof(float complex)); // impulse response of Nyquist filter
+    liquid_float_complex * const H = (liquid_float_complex*) alloca(h_len * sizeof(liquid_float_complex)); // frequency response of Nyquist filter
+    liquid_float_complex * const h = (liquid_float_complex*) alloca(h_len * sizeof(liquid_float_complex)); // impulse response of Nyquist filter
 
     // compute Nyquist filter frequency response
     switch (_type) {

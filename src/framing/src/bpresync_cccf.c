@@ -34,9 +34,9 @@
 #define EXTENSION_SHORT     "f"
 #define EXTENSION_FULL      "cccf"
 
-#define TO                  float complex
-#define TC                  float complex
-#define TI                  float complex
+#define TO                  liquid_float_complex
+#define TC                  liquid_float_complex
+#define TI                  liquid_float_complex
 
 #define ABS(X)              cabsf(X)
 #define REAL(X)             crealf(X)

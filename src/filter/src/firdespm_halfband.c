@@ -38,8 +38,8 @@ struct firdespm_halfband_s {
 
     // utility calculation
     unsigned int    nfft;       // transform size for analysis
-    float complex * buf_time;   // time buffer
-    float complex * buf_freq;   // frequency buffer
+    liquid_float_complex * buf_time;   // time buffer
+    liquid_float_complex * buf_freq;   // frequency buffer
     fftplan         fft;        // transform object
     unsigned int    n;          // number of points to evaluate
 };
@@ -101,8 +101,8 @@ int liquid_firdespm_halfband_ft(unsigned int _m, float _ft, float * _h)
     q.nfft = 1200;
     while (q.nfft < 20*q.m)
         q.nfft <<= 1;
-    q.buf_time = (float complex*) fft_malloc(q.nfft*sizeof(float complex));
-    q.buf_freq = (float complex*) fft_malloc(q.nfft*sizeof(float complex));
+    q.buf_time = (liquid_float_complex*) fft_malloc(q.nfft*sizeof(liquid_float_complex));
+    q.buf_freq = (liquid_float_complex*) fft_malloc(q.nfft*sizeof(liquid_float_complex));
     q.fft      = fft_create_plan(q.nfft, q.buf_time, q.buf_freq, LIQUID_FFT_FORWARD, 0);
 
     // compute indices of stop-band analysis

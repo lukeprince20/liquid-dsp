@@ -142,7 +142,7 @@ FIRFILT() FIRFILT(_create_rnyquist)(int          _type,
     if (liquid_firdes_prototype(_type,_k,_m,_beta,_mu,hf) != LIQUID_OK)
         return liquid_error_config("firfilt_%s_create_rnyquist(), invalid configuration", EXTENSION_FULL);
 
-    // copy coefficients to type-specific array (e.g. float complex)
+    // copy coefficients to type-specific array (e.g. liquid_float_complex)
     unsigned int i;
     TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     for (i=0; i<h_len; i++)
@@ -165,7 +165,7 @@ FIRFILT() FIRFILT(_create_firdespm)(unsigned int _h_len,
     if (firdespm_lowpass(_h_len,_fc,_as,0,hf) != LIQUID_OK)
         return liquid_error_config("firfilt_%s_create_firdespm(), invalid config", EXTENSION_FULL);
 
-    // copy coefficients to type-specific array (e.g. float complex)
+    // copy coefficients to type-specific array (e.g. liquid_float_complex)
     // and scale by filter bandwidth to be consistent with other lowpass prototypes
     unsigned int i;
     TC * const hc = (TC*) alloca(_h_len*sizeof(TC));
@@ -512,7 +512,7 @@ int FIRFILT(_copy_coefficients)(FIRFILT() _q,
 //  _H      :   output frequency response
 int FIRFILT(_freqresponse)(FIRFILT()       _q,
                            float           _fc,
-                           float complex * _H)
+                           liquid_float_complex * _H)
 {
 #if TC_COMPLEX==0
     int rc = liquid_freqrespf(_q->h, _q->h_len, _fc, _H);

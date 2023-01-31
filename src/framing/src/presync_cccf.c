@@ -35,9 +35,9 @@
 #define EXTENSION_FULL      "cccf"
 
 #define T                   float           // primitive type
-#define TO                  float complex   // output type
-#define TC                  float complex   // coefficient type
-#define TI                  float complex   // input type
+#define TO                  liquid_float_complex   // output type
+#define TC                  liquid_float_complex   // coefficient type
+#define TI                  liquid_float_complex   // input type
 
 #define ABS(X)              cabsf(X)
 #define REAL(X)             crealf(X)

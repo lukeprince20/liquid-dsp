@@ -31,9 +31,9 @@
 
 #define PRINTVAL(x)         printf("%12.4e + j%12.4e", crealf(x), cimagf(x))
 
-#define TO                  float complex
+#define TO                  liquid_float_complex
 #define TC                  float
-#define TI                  float complex
+#define TI                  liquid_float_complex
 #define ABS(X)              cabsf(X)
 #define WINDOW(name)        LIQUID_CONCAT(windowcf,name)
 #define DOTPROD(name)       LIQUID_CONCAT(dotprod_crcf,name)

@@ -29,7 +29,7 @@
 // 
 #define QUANTIZER(name)     LIQUID_CONCAT(quantizercf,name)
 
-#define T                   float complex   // general
+#define T                   liquid_float_complex   // general
 
 #define T_COMPLEX           1
 

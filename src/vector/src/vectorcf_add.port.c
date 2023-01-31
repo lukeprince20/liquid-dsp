@@ -27,7 +27,7 @@
 #include "liquid.internal.h"
 
 #define VECTOR(name)    LIQUID_CONCAT(liquid_vectorcf,name)
-#define T               float complex
+#define T               liquid_float_complex
 #define TP              float
 
 #include "vector_add.proto.c"

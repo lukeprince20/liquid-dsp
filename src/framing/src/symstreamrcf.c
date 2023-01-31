@@ -29,7 +29,7 @@
 // naming extensions (useful for print statements)
 #define EXTENSION           "cf"
 
-#define TO                  float complex   // output type
+#define TO                  liquid_float_complex   // output type
 #define T                   float           // primitive type
 
 #define TO_COMPLEX          1

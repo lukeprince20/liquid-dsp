@@ -39,20 +39,20 @@
 
 // forward declaration of internal methods
 int dotprod_cccf_execute_avx(dotprod_cccf    _q,
-                             float complex * _x,
-                             float complex * _y);
+                             liquid_float_complex * _x,
+                             liquid_float_complex * _y);
 
 int dotprod_cccf_execute_avx4(dotprod_cccf    _q,
-                              float complex * _x,
-                              float complex * _y);
+                              liquid_float_complex * _x,
+                              liquid_float_complex * _y);
 
 // basic dot product (ordinal calculation)
-int dotprod_cccf_run(float complex * _h,
-                     float complex * _x,
+int dotprod_cccf_run(liquid_float_complex * _h,
+                     liquid_float_complex * _x,
                      unsigned int    _n,
-                     float complex * _y)
+                     liquid_float_complex * _y)
 {
-    float complex r = 0;
+    liquid_float_complex r = 0;
     unsigned int i;
     for (i=0; i<_n; i++)
         r += _h[i] * _x[i];
@@ -61,12 +61,12 @@ int dotprod_cccf_run(float complex * _h,
 }
 
 // basic dot product (ordinal calculation) with loop unrolled
-int dotprod_cccf_run4(float complex * _h,
-                      float complex * _x,
+int dotprod_cccf_run4(liquid_float_complex * _h,
+                      liquid_float_complex * _x,
                       unsigned int    _n,
-                      float complex * _y)
+                      liquid_float_complex * _y)
 {
-    float complex r = 0;
+    liquid_float_complex r = 0;
 
     // t = 4*(floor(_n/4))
     unsigned int t=(_n>>2)<<2; 
@@ -99,7 +99,7 @@ struct dotprod_cccf_s {
     float * hq;         // quadrature
 };
 
-dotprod_cccf dotprod_cccf_create_opt(float complex * _h,
+dotprod_cccf dotprod_cccf_create_opt(liquid_float_complex * _h,
                                      unsigned int    _n,
                                      int             _rev)
 {
@@ -127,13 +127,13 @@ dotprod_cccf dotprod_cccf_create_opt(float complex * _h,
     return q;
 }
 
-dotprod_cccf dotprod_cccf_create(float complex * _h,
+dotprod_cccf dotprod_cccf_create(liquid_float_complex * _h,
                                  unsigned int    _n)
 {
     return dotprod_cccf_create_opt(_h, _n, 0);
 }
 
-dotprod_cccf dotprod_cccf_create_rev(float complex * _h,
+dotprod_cccf dotprod_cccf_create_rev(liquid_float_complex * _h,
                                      unsigned int    _n)
 {
     return dotprod_cccf_create_opt(_h, _n, 1);
@@ -141,7 +141,7 @@ dotprod_cccf dotprod_cccf_create_rev(float complex * _h,
 
 // re-create the structured dotprod object
 dotprod_cccf dotprod_cccf_recreate(dotprod_cccf    _q,
-                                   float complex * _h,
+                                   liquid_float_complex * _h,
                                    unsigned int    _n)
 {
     // completely destroy and re-create dotprod object
@@ -151,7 +151,7 @@ dotprod_cccf dotprod_cccf_recreate(dotprod_cccf    _q,
 
 // re-create the structured dotprod object, coefficients reversed
 dotprod_cccf dotprod_cccf_recreate_rev(dotprod_cccf    _q,
-                                       float complex * _h,
+                                       liquid_float_complex * _h,
                                        unsigned int    _n)
 {
     // completely destroy and re-create dotprod object
@@ -204,8 +204,8 @@ int dotprod_cccf_print(dotprod_cccf _q)
 //  _x      :   input array
 //  _y      :   output sample
 int dotprod_cccf_execute(dotprod_cccf    _q,
-                         float complex * _x,
-                         float complex * _y)
+                         liquid_float_complex * _x,
+                         liquid_float_complex * _y)
 {
     // switch based on size
     if (_q->n < 64) {
@@ -243,8 +243,8 @@ int dotprod_cccf_execute(dotprod_cccf    _q,
 //           x[3].imag * h[3].imag };
 //
 int dotprod_cccf_execute_avx(dotprod_cccf    _q,
-                             float complex * _x,
-                             float complex * _y)
+                             liquid_float_complex * _x,
+                             liquid_float_complex * _y)
 {
     // type cast input as floating point array
     float * x = (float*) _x;
@@ -300,8 +300,8 @@ int dotprod_cccf_execute_avx(dotprod_cccf    _q,
     w[0] += w[2] + w[4] + w[6];   // I
     w[1] += w[3] + w[5] + w[7];   // Q
 
-    //float complex total = *((float complex*)w);
-    float complex total = w[0] + w[1] * _Complex_I;
+    //liquid_float_complex total = *((liquid_float_complex*)w);
+    liquid_float_complex total = w[0] + w[1] * _Complex_I;
 
     // cleanup
     for (i=t/2; i<_q->n; i++)
@@ -314,8 +314,8 @@ int dotprod_cccf_execute_avx(dotprod_cccf    _q,
 
 // use AVX extensions
 int dotprod_cccf_execute_avx4(dotprod_cccf    _q,
-                              float complex * _x,
-                              float complex * _y)
+                              liquid_float_complex * _x,
+                              liquid_float_complex * _y)
 {
     // type cast input as floating point array
     float * x = (float*) _x;
@@ -387,7 +387,7 @@ int dotprod_cccf_execute_avx4(dotprod_cccf    _q,
     _mm256_store_ps(wq, sumq);
 
     // fold down (add/sub)
-    float complex total = 
+    liquid_float_complex total = 
         ((wi[0] - wq[0]) + (wi[2] - wq[2]) + (wi[4] - wq[4]) + (wi[6] - wq[6])) +
         ((wi[1] + wq[1]) + (wi[3] + wq[3]) + (wi[5] + wq[5]) + (wi[7] + wq[7])) * _Complex_I;
 

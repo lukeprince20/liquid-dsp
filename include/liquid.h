@@ -129,6 +129,8 @@ typedef enum {
 extern const char * liquid_error_str[LIQUID_NUM_ERRORS];
 const char *        liquid_error_info(liquid_error_code _code);
 
+#define LIQUID_XSTRINGIFY(s) LIQUID_STRINGIFY(s)
+#define LIQUID_STRINGIFY(s) #s
 #define LIQUID_CONCAT(prefix, name) prefix ## name
 #define LIQUID_VALIDATE_INPUT
 
@@ -151,6 +153,9 @@ const char *        liquid_error_info(liquid_error_code _code);
 
 LIQUID_DEFINE_COMPLEX(float,  liquid_float_complex);
 LIQUID_DEFINE_COMPLEX(double, liquid_double_complex);
+
+#define LIQUID_XCOMPLEX(T) LIQUID_COMPLEX(T)
+#define LIQUID_COMPLEX(R) liquid_ ## R ## _complex
 
 // external compile-time deprecation warnings with messages
 #ifdef __GNUC__

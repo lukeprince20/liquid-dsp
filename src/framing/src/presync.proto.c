@@ -54,8 +54,8 @@ struct PRESYNC(_s) {
 //  _rxy1   : negative frequency correlation output (conjugated)
 int PRESYNC(_correlate)(PRESYNC()       _q,
                         unsigned int    _id,
-                        float complex * _rxy0,
-                        float complex * _rxy1);
+                        liquid_float_complex * _rxy0,
+                        liquid_float_complex * _rxy1);
 
 /* create binary pre-demod synchronizer                     */
 /*  _v          :   baseband sequence                       */
@@ -180,10 +180,10 @@ int PRESYNC(_execute)(PRESYNC() _q,
                       float *   _dphi_hat)
 {
     unsigned int i;
-    float complex rxy_max = 0;  // maximum cross-correlation
+    liquid_float_complex rxy_max = 0;  // maximum cross-correlation
     float abs_rxy_max = 0;      // absolute value of rxy_max
-    float complex rxy0;
-    float complex rxy1;
+    liquid_float_complex rxy0;
+    liquid_float_complex rxy1;
     float dphi_hat = 0.0f;
     for (i=0; i<_q->m; i++)  {
 
@@ -220,8 +220,8 @@ int PRESYNC(_execute)(PRESYNC() _q,
 //  _rxy1   : negative frequency correlation output (conjugated)
 int PRESYNC(_correlate)(PRESYNC()       _q,
                         unsigned int    _id,
-                        float complex * _rxy0,
-                        float complex * _rxy1)
+                        liquid_float_complex * _rxy0,
+                        liquid_float_complex * _rxy1)
 {
     // validate input...
     if (_id >= _q->m)

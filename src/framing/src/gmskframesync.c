@@ -38,7 +38,7 @@
 
 // execute a single, post-filtered sample
 int gmskframesync_execute_sample(gmskframesync _q,
-                                 float complex _x);
+                                 liquid_float_complex _x);
 
 // push buffered p/n sequence through synchronizer
 int gmskframesync_pushpn(gmskframesync _q);
@@ -48,7 +48,7 @@ int gmskframesync_syncpn(gmskframesync _q);
 
 // update instantaneous frequency estimate
 int gmskframesync_update_fi(gmskframesync _q,
-                            float complex _x);
+                            liquid_float_complex _x);
 
 // update symbol synchronizer internal state (filtered error, index, etc.)
 //  _q      :   frame synchronizer
@@ -59,10 +59,10 @@ int gmskframesync_update_symsync(gmskframesync _q,
                                 float *       _y);
 
 // execute stages
-int gmskframesync_execute_detectframe(gmskframesync _q, float complex _x);
-int gmskframesync_execute_rxpreamble( gmskframesync _q, float complex _x);
-int gmskframesync_execute_rxheader(   gmskframesync _q, float complex _x);
-int gmskframesync_execute_rxpayload(  gmskframesync _q, float complex _x);
+int gmskframesync_execute_detectframe(gmskframesync _q, liquid_float_complex _x);
+int gmskframesync_execute_rxpreamble( gmskframesync _q, liquid_float_complex _x);
+int gmskframesync_execute_rxheader(   gmskframesync _q, liquid_float_complex _x);
+int gmskframesync_execute_rxpayload(  gmskframesync _q, liquid_float_complex _x);
 
 // decode header
 int gmskframesync_decode_header(gmskframesync _q);
@@ -81,7 +81,7 @@ struct gmskframesync_s {
     framedatastats_s framedatastats;// frame statistic object (packet statistics)
 
     //
-    float complex x_prime;          // received sample state
+    liquid_float_complex x_prime;          // received sample state
     float fi_hat;                   // instantaneous frequency estimate
     
     // timing recovery objects, states
@@ -171,7 +171,7 @@ gmskframesync gmskframesync_create_set(unsigned int       _k,
     q->preamble_len = 63;
     q->preamble_pn = (float*)malloc(q->preamble_len*sizeof(float));
     q->preamble_rx = (float*)malloc(q->preamble_len*sizeof(float));
-    float complex * const preamble_samples = (float complex*) alloca((q->preamble_len*q->k)*sizeof(float complex));
+    liquid_float_complex * const preamble_samples = (liquid_float_complex*) alloca((q->preamble_len*q->k)*sizeof(liquid_float_complex));
     msequence ms = msequence_create(6, 0x6d, 1);
     gmskmod mod = gmskmod_create(q->k, q->m, q->BT);
 
@@ -348,7 +348,7 @@ int gmskframesync_is_frame_open(gmskframesync _q)
 }
 
 int gmskframesync_execute_sample(gmskframesync _q,
-                                 float complex _x)
+                                 liquid_float_complex _x)
 {
     switch (_q->state) {
     case STATE_DETECTFRAME: return gmskframesync_execute_detectframe(_q, _x);
@@ -366,13 +366,13 @@ int gmskframesync_execute_sample(gmskframesync _q,
 //  _x      :   input sample array [size: _n x 1]
 //  _n      :   number of input samples
 int gmskframesync_execute(gmskframesync   _q,
-                          float complex * _x,
+                          liquid_float_complex * _x,
                           unsigned int    _n)
 {
     // push through synchronizer
     unsigned int i;
     for (i=0; i<_n; i++) {
-        float complex xf;   // input sample
+        liquid_float_complex xf;   // input sample
 #if GMSKFRAMESYNC_PREFILTER
         iirfilt_crcf_execute(_q->prefilter, _x[i], &xf);
 #else
@@ -496,7 +496,7 @@ int gmskframesync_pushpn(gmskframesync _q)
     firpfb_rrrf_reset(_q->dmf);
 
     // read buffer
-    float complex * rc;
+    liquid_float_complex * rc;
     windowcf_read(_q->buffer, &rc);
 
     // compute delay and filterbank index
@@ -518,7 +518,7 @@ int gmskframesync_pushpn(gmskframesync _q)
     
     unsigned int buffer_len = (_q->preamble_len + _q->m) * _q->k;
     for (i=0; i<delay; i++) {
-        float complex y;
+        liquid_float_complex y;
         nco_crcf_mix_down(_q->nco_coarse, rc[i], &y);
         nco_crcf_step(_q->nco_coarse);
 
@@ -555,7 +555,7 @@ int gmskframesync_syncpn(gmskframesync _q)
 
 // update instantaneous frequency estimate
 int gmskframesync_update_fi(gmskframesync _q,
-                            float complex _x)
+                            liquid_float_complex _x)
 {
     // compute differential phase
     _q->fi_hat = cargf(conjf(_q->x_prime)*_x) * _q->k;
@@ -566,7 +566,7 @@ int gmskframesync_update_fi(gmskframesync _q,
 }
 
 int gmskframesync_execute_detectframe(gmskframesync _q,
-                                      float complex _x)
+                                      liquid_float_complex _x)
 {
     // push sample into pre-demod p/n sequence buffer
     windowcf_push(_q->buffer, _x);
@@ -591,14 +591,14 @@ int gmskframesync_execute_detectframe(gmskframesync _q,
 }
 
 int gmskframesync_execute_rxpreamble(gmskframesync _q,
-                                     float complex _x)
+                                     liquid_float_complex _x)
 {
     // validate input
     if (_q->preamble_counter == _q->preamble_len)
         return liquid_error(LIQUID_EINT,"gmskframesync_execute_rxpn(), p/n buffer already full!\n");
 
     // mix signal down
-    float complex y;
+    liquid_float_complex y;
     nco_crcf_mix_down(_q->nco_coarse, _x, &y);
     nco_crcf_step(_q->nco_coarse);
 
@@ -626,10 +626,10 @@ int gmskframesync_execute_rxpreamble(gmskframesync _q,
 }
 
 int gmskframesync_execute_rxheader(gmskframesync _q,
-                                   float complex _x)
+                                   liquid_float_complex _x)
 {
     // mix signal down
-    float complex y;
+    liquid_float_complex y;
     nco_crcf_mix_down(_q->nco_coarse, _x, &y);
     nco_crcf_step(_q->nco_coarse);
 
@@ -694,10 +694,10 @@ int gmskframesync_execute_rxheader(gmskframesync _q,
 }
 
 int gmskframesync_execute_rxpayload(gmskframesync _q,
-                                    float complex _x)
+                                    liquid_float_complex _x)
 {
     // mix signal down
-    float complex y;
+    liquid_float_complex y;
     nco_crcf_mix_down(_q->nco_coarse, _x, &y);
     nco_crcf_step(_q->nco_coarse);
 

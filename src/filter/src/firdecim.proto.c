@@ -100,7 +100,7 @@ FIRDECIM() FIRDECIM(_create_kaiser)(unsigned int _M,
     float fc = 0.5f / (float) (_M);
     liquid_firdes_kaiser(h_len, fc, _as, 0.0f, hf);
 
-    // copy coefficients to type-specific array (e.g. float complex)
+    // copy coefficients to type-specific array (e.g. liquid_float_complex)
     TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     unsigned int i;
     for (i=0; i<h_len; i++)
@@ -138,7 +138,7 @@ FIRDECIM() FIRDECIM(_create_prototype)(int          _type,
     if (liquid_firdes_prototype(_type,_M,_m,_beta,_dt,h) != LIQUID_OK)
         return liquid_error_config("decim_%s_create_prototype(), could not design internal filter", EXTENSION_FULL);
 
-    // copy coefficients to type-specific array (e.g. float complex)
+    // copy coefficients to type-specific array (e.g. liquid_float_complex)
     unsigned int i;
     TC * const hc = (TC*) alloca(h_len*sizeof(TC));
     for (i=0; i<h_len; i++)

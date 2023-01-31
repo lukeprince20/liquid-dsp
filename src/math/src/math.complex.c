@@ -31,7 +31,7 @@
 #include "liquid.internal.h"
 
 // complex square root
-float complex liquid_csqrtf(float complex _z)
+liquid_float_complex liquid_csqrtf(liquid_float_complex _z)
 {
     float r = cabsf(_z);            // magnitude of _z
     float a = crealf(_z);           // real component of _z
@@ -45,7 +45,7 @@ float complex liquid_csqrtf(float complex _z)
 }
 
 // complex exponent
-float complex liquid_cexpf(float complex _z)
+liquid_float_complex liquid_cexpf(liquid_float_complex _z)
 {
     float r = expf( crealf(_z) );
     float re = cosf( cimagf(_z) );
@@ -55,19 +55,19 @@ float complex liquid_cexpf(float complex _z)
 }
 
 // complex logarithm
-float complex liquid_clogf(float complex _z)
+liquid_float_complex liquid_clogf(liquid_float_complex _z)
 {
     return logf(cabsf(_z)) + _Complex_I*cargf(_z);
 }
 
 // complex arcsin
-float complex liquid_casinf(float complex _z)
+liquid_float_complex liquid_casinf(liquid_float_complex _z)
 {
     return 0.5f*M_PI - liquid_cacosf(_z);
 }
 
 // complex arccos
-float complex liquid_cacosf(float complex _z)
+liquid_float_complex liquid_cacosf(liquid_float_complex _z)
 {
     // return based on quadrant
     int sign_i = crealf(_z) > 0;
@@ -84,16 +84,16 @@ float complex liquid_cacosf(float complex _z)
 }
 
 // complex arctan
-float complex liquid_catanf(float complex _z)
+liquid_float_complex liquid_catanf(liquid_float_complex _z)
 {
-    float complex t0 = 1.0f - _Complex_I*_z;
-    float complex t1 = 1.0f + _Complex_I*_z;
+    liquid_float_complex t0 = 1.0f - _Complex_I*_z;
+    liquid_float_complex t1 = 1.0f + _Complex_I*_z;
 
     return 0.5f*_Complex_I*liquid_clogf( t0 / t1 );
 }
 
 // approximation to cargf() but faster
-float liquid_cargf_approx(float complex _x)
+float liquid_cargf_approx(liquid_float_complex _x)
 {
     float theta;
     float xi = crealf(_x);

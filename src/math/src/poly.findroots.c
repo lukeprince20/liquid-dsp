@@ -40,7 +40,7 @@
 //  _roots  :   resulting complex roots [size: _k-1 x 1]
 int liquid_poly_findroots_durandkerner(double *         _p,
                                        unsigned int     _k,
-                                       double complex * _roots)
+                                       liquid_double_complex * _roots)
 {
     if (_k < 2)
         return liquid_error(LIQUID_EICONFIG,"liquid_poly_findroots_durandkerner(), order must be greater than 0");
@@ -122,7 +122,7 @@ int liquid_poly_findroots_durandkerner(double *         _p,
 //  _roots  :   resulting complex roots [size: _k-1 x 1]
 int liquid_poly_findroots_bairstow(double *         _p,
                                    unsigned int     _k,
-                                   double complex * _roots)
+                                   liquid_double_complex * _roots)
 {
     double * const p0 = (double*) alloca((_k)*sizeof(double)); // buffer 0
     double * const p1 = (double*) alloca((_k)*sizeof(double)); // buffer 1
@@ -156,8 +156,8 @@ int liquid_poly_findroots_bairstow(double *         _p,
             liquid_poly_findroots_bairstow_persistent(p,n,pr,&u,&v);
 
         // compute complex roots of x^2 + u*x + v
-        double complex r0 = 0.5f*(-u + csqrtf(u*u - 4.0*v));
-        double complex r1 = 0.5f*(-u - csqrtf(u*u - 4.0*v));
+        liquid_double_complex r0 = 0.5f*(-u + csqrtf(u*u - 4.0*v));
+        liquid_double_complex r1 = 0.5f*(-u - csqrtf(u*u - 4.0*v));
         //printf("roots: r0=%12.8f + j*%12.8f, r1=%12.8f + j*%12.8f\n\n",
         //        creal(r0), cimag(r0), creal(r1), cimag(r1));
 
@@ -358,11 +358,11 @@ int liquid_poly_findroots_bairstow_persistent(double *     _p,
 int liquid_poly_sort_roots_compare(const void * _a,
                                    const void * _b)
 {
-    double ar = (double) creal( *((double complex*)_a) );
-    double br = (double) creal( *((double complex*)_b) );
+    double ar = (double) creal( *((liquid_double_complex*)_a) );
+    double br = (double) creal( *((liquid_double_complex*)_b) );
 
-    double ai = (double) cimag( *((double complex*)_a) );
-    double bi = (double) cimag( *((double complex*)_b) );
+    double ai = (double) cimag( *((liquid_double_complex*)_a) );
+    double bi = (double) cimag( *((liquid_double_complex*)_b) );
 
     return ar == br ? (ai > bi ? -1 : 1) : (ar > br ? 1 : -1);
 }

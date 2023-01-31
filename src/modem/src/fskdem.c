@@ -42,8 +42,8 @@ struct fskdem_s {
     unsigned int    M;          // constellation size
     float           M2;         // (M-1)/2
     unsigned int    K;          // FFT size
-    float complex * buf_time;   // FFT input buffer
-    float complex * buf_freq;   // FFT output buffer
+    liquid_float_complex * buf_time;   // FFT input buffer
+    liquid_float_complex * buf_freq;   // FFT output buffer
     FFT_PLAN        fft;        // FFT object
     unsigned int *  demod_map;  // demodulation map
 
@@ -131,8 +131,8 @@ fskdem fskdem_create(unsigned int _m,
     }
 
     // allocate memory for transform
-    q->buf_time = (float complex*) FFT_MALLOC(q->K * sizeof(float complex));
-    q->buf_freq = (float complex*) FFT_MALLOC(q->K * sizeof(float complex));
+    q->buf_time = (liquid_float_complex*) FFT_MALLOC(q->K * sizeof(liquid_float_complex));
+    q->buf_freq = (liquid_float_complex*) FFT_MALLOC(q->K * sizeof(liquid_float_complex));
     q->fft = FFT_CREATE_PLAN(q->K, q->buf_time, q->buf_freq, FFT_DIR_FORWARD, 0);
 
     // reset modem object
@@ -154,16 +154,16 @@ fskdem fskdem_copy(fskdem q_orig)
     memmove(q_copy, q_orig, sizeof(struct fskdem_s));
 
     // allocate memory for transform
-    q_copy->buf_time = (float complex*) FFT_MALLOC(q_copy->K * sizeof(float complex));
-    q_copy->buf_freq = (float complex*) FFT_MALLOC(q_copy->K * sizeof(float complex));
+    q_copy->buf_time = (liquid_float_complex*) FFT_MALLOC(q_copy->K * sizeof(liquid_float_complex));
+    q_copy->buf_freq = (liquid_float_complex*) FFT_MALLOC(q_copy->K * sizeof(liquid_float_complex));
     q_copy->fft = FFT_CREATE_PLAN(q_copy->K, q_copy->buf_time, q_copy->buf_freq, FFT_DIR_FORWARD, 0);
 
     // copy internal time and frequency buffers
-    memmove(q_copy->buf_time, q_orig->buf_time, q_copy->K * sizeof(float complex));
-    memmove(q_copy->buf_freq, q_orig->buf_freq, q_copy->K * sizeof(float complex));
+    memmove(q_copy->buf_time, q_orig->buf_time, q_copy->K * sizeof(liquid_float_complex));
+    memmove(q_copy->buf_freq, q_orig->buf_freq, q_copy->K * sizeof(liquid_float_complex));
 
     // copy demodulation map
-    q_copy->demod_map = (unsigned int*)liquid_malloc_copy(q_orig->demod_map, q_copy->M, sizeof(float complex));
+    q_copy->demod_map = (unsigned int*)liquid_malloc_copy(q_orig->demod_map, q_copy->M, sizeof(liquid_float_complex));
 
     // return new object
     return q_copy;
@@ -212,10 +212,10 @@ int fskdem_reset(fskdem _q)
 //  _q      :   fskdem object
 //  _y      :   input sample array [size: _k x 1]
 unsigned int fskdem_demodulate(fskdem          _q,
-                               float complex * _y)
+                               liquid_float_complex * _y)
 {
     // copy input to internal time buffer
-    memmove(_q->buf_time, _y, _q->k*sizeof(float complex));
+    memmove(_q->buf_time, _y, _q->k*sizeof(liquid_float_complex));
 
     // compute transform, storing result in 'buf_freq'
     FFT_EXECUTE(_q->fft);
@@ -276,7 +276,7 @@ float fskdem_get_symbol_energy(fskdem       _q,
     unsigned int index = _q->demod_map[_s];
 
     // compute energy around FFT bin
-    float complex v = _q->buf_freq[index];
+    liquid_float_complex v = _q->buf_freq[index];
     float energy = crealf(v)*crealf(v) + cimagf(v)*cimagf(v);
     int i;
     for (i=0; i<_range; i++) {
@@ -284,8 +284,8 @@ float fskdem_get_symbol_energy(fskdem       _q,
         unsigned int i0 = (index         + i) % _q->K;
         unsigned int i1 = (index + _q->K - i) % _q->K;
 
-        float complex v0 = _q->buf_freq[i0];
-        float complex v1 = _q->buf_freq[i1];
+        liquid_float_complex v0 = _q->buf_freq[i0];
+        liquid_float_complex v1 = _q->buf_freq[i1];
 
         energy += crealf(v0)*crealf(v0) + cimagf(v0)*cimagf(v0);
         energy += crealf(v1)*crealf(v1) + cimagf(v1)*cimagf(v1);

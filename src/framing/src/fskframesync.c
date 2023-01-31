@@ -39,9 +39,9 @@
 #define DEBUG_FSKFRAMESYNC_BUFFER_LEN  (2000)
 
 // execute stages
-int fskframesync_execute_detectframe(fskframesync _q, float complex _x);
-int fskframesync_execute_rxheader(   fskframesync _q, float complex _x);
-int fskframesync_execute_rxpayload(  fskframesync _q, float complex _x);
+int fskframesync_execute_detectframe(fskframesync _q, liquid_float_complex _x);
+int fskframesync_execute_rxheader(   fskframesync _q, liquid_float_complex _x);
+int fskframesync_execute_rxpayload(  fskframesync _q, liquid_float_complex _x);
 
 // decode header
 int fskframesync_decode_header(fskframesync _q);
@@ -54,7 +54,7 @@ struct fskframesync_s {
     unsigned int    M;                  // demodulator constellation size, M=2^m
     fskdem          dem_header;         // demodulator object for the header (BFSK)
     fskdem          dem;                // demodulator object (M-FSK)
-    float complex * buf;                // demodulator transmit buffer [size: k x 1]
+    liquid_float_complex * buf;                // demodulator transmit buffer [size: k x 1]
 
     framesync_callback  callback;       // user-defined callback function
     void *              userdata;       // user-defined data structure
@@ -148,7 +148,7 @@ fskframesync fskframesync_create(framesync_callback _callback,
     // create demodulators
     q->dem_header = fskdem_create(   1, q->k, q->bandwidth);
     q->dem        = fskdem_create(q->m, q->k, q->bandwidth);
-    q->buf        = (float complex*) malloc( q->k * sizeof(float complex) );
+    q->buf        = (liquid_float_complex*) malloc( q->k * sizeof(liquid_float_complex) );
 
     // create polyphase filterbank for timing recovery
     q->npfb = 64;
@@ -355,7 +355,7 @@ int fskframesync_reset(fskframesync _q)
 //  _q      :   frame synchronizer object
 //  _x      :   input sample
 int fskframesync_execute(fskframesync  _q,
-                         float complex _x)
+                         liquid_float_complex _x)
 {
     // push through synchronizer
 #if DEBUG_FSKFRAMESYNC
@@ -377,7 +377,7 @@ int fskframesync_execute(fskframesync  _q,
 //  _x      :   input sample array [size: _n x 1]
 //  _n      :   number of input samples
 int fskframesync_execute_block(fskframesync    _q,
-                                float complex * _x,
+                                liquid_float_complex * _x,
                                 unsigned int    _n)
 {
     unsigned int i;
@@ -393,11 +393,11 @@ int fskframesync_execute_block(fskframesync    _q,
 //
 
 int fskframesync_execute_detectframe(fskframesync  _q,
-                                     float complex _x)
+                                     liquid_float_complex _x)
 {
 #if 0
     // push sample through timing recovery and compute output
-    float complex y;
+    liquid_float_complex y;
     firpfb_crcf_push(_q->pfb, _x);
     firpfb_crcf_execute(_q->pfb, 0, &y);
 
@@ -416,7 +416,7 @@ int fskframesync_execute_detectframe(fskframesync  _q,
     _q->timer = _q->k;
 
     // run demodulator and retrieve FFT result, computing LLR sample output
-    float complex * r;
+    liquid_float_complex * r;
     windowcf_read(_q->buf_rx, &r);
     fskdem_demodulate(_q->dem_header, r);
     int fft_bin_range = 2;
@@ -488,11 +488,11 @@ int fskframesync_execute_detectframe(fskframesync  _q,
 }
 
 int fskframesync_execute_rxheader(fskframesync  _q,
-                                  float complex _x)
+                                  liquid_float_complex _x)
 {
 #if 0
     // push sample through timing recovery and compute output
-    float complex y;
+    liquid_float_complex y;
     firpfb_crcf_push(_q->pfb, _x);
     firpfb_crcf_execute(_q->pfb, 0, &y);
 
@@ -511,7 +511,7 @@ int fskframesync_execute_rxheader(fskframesync  _q,
     _q->timer = _q->k;
 
     // run demodulator
-    float complex * r;
+    liquid_float_complex * r;
     windowcf_read(_q->buf_rx, &r);
     unsigned char sym = fskdem_demodulate(_q->dem_header, r);
 
@@ -580,11 +580,11 @@ int fskframesync_execute_rxheader(fskframesync  _q,
 }
 
 int fskframesync_execute_rxpayload(fskframesync  _q,
-                                   float complex _x)
+                                   liquid_float_complex _x)
 {
 #if 0
     // push sample through timing recovery and compute output
-    float complex y;
+    liquid_float_complex y;
     firpfb_crcf_push(_q->pfb, _x);
     firpfb_crcf_execute(_q->pfb, 0, &y);
 
@@ -603,7 +603,7 @@ int fskframesync_execute_rxpayload(fskframesync  _q,
     _q->timer = _q->k;
 
     // run demodulator
-    float complex * r;
+    liquid_float_complex * r;
     windowcf_read(_q->buf_rx, &r);
     unsigned char sym = fskdem_demodulate(_q->dem, r);
 
@@ -707,7 +707,7 @@ int fskframesync_debug_export(fskframesync _q,
     fprintf(fid,"num_samples = %u;\n", DEBUG_FSKFRAMESYNC_BUFFER_LEN);
     fprintf(fid,"t = 0:(num_samples-1);\n");
     unsigned int i;
-    float complex * rc;
+    liquid_float_complex * rc;
 
     // write x
     fprintf(fid,"x = zeros(1,num_samples);\n");

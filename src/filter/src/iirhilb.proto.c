@@ -130,7 +130,7 @@ void IIRHILB(_reset)(IIRHILB() _q)
 //  _y      :   complex-valued output sample
 void IIRHILB(_r2c_execute)(IIRHILB()   _q,
                            T           _x,
-                           T complex * _y)
+                           LIQUID_XCOMPLEX(T) * _y)
 {
     // compute relevant output depending on state
     T yi = 0;
@@ -167,7 +167,7 @@ void IIRHILB(_r2c_execute)(IIRHILB()   _q,
 int IIRHILB(_r2c_execute_block)(IIRHILB()    _q,
                                 T *          _x,
                                 unsigned int _n,
-                                T complex *  _y)
+                                LIQUID_XCOMPLEX(T) *  _y)
 {
     unsigned int i;
     for (i=0; i<_n; i++)
@@ -180,7 +180,7 @@ int IIRHILB(_r2c_execute_block)(IIRHILB()    _q,
 //  _y      :   complex-valued input sample
 //  _x      :   real-valued output sample
 void IIRHILB(_c2r_execute)(IIRHILB() _q,
-                           T complex _x,
+                           LIQUID_XCOMPLEX(T) _x,
                            T *       _y)
 {
     // compute relevant output depending on state
@@ -215,7 +215,7 @@ void IIRHILB(_c2r_execute)(IIRHILB() _q,
 }
 // Execute Hilbert transform (complex to real) on a block of samples
 int IIRHILB(_c2r_execute_block)(IIRHILB()    _q,
-                                T complex *  _x,
+                                LIQUID_XCOMPLEX(T) *  _x,
                                 unsigned int _n,
                                 T *          _y)
 {
@@ -231,7 +231,7 @@ int IIRHILB(_c2r_execute_block)(IIRHILB()    _q,
 //  _y      :   complex-valued output sample
 void IIRHILB(_decim_execute)(IIRHILB()   _q,
                              T *         _x,
-                             T complex * _y)
+                             LIQUID_XCOMPLEX(T) * _y)
 {
     // mix down by Fs/4
     T xi = _q->state ? -_x[0] :  _x[0];
@@ -263,7 +263,7 @@ void IIRHILB(_decim_execute)(IIRHILB()   _q,
 void IIRHILB(_decim_execute_block)(IIRHILB()    _q,
                                    T *          _x,
                                    unsigned int _n,
-                                   T complex *  _y)
+                                   LIQUID_XCOMPLEX(T) *  _y)
 {
     unsigned int i;
 
@@ -276,7 +276,7 @@ void IIRHILB(_decim_execute_block)(IIRHILB()    _q,
 //  _y      :   complex-valued input sample
 //  _x      :   real-valued output array [size: 2 x 1]
 void IIRHILB(_interp_execute)(IIRHILB() _q,
-                              T complex _x,
+                              LIQUID_XCOMPLEX(T) _x,
                               T *       _y)
 {
     // upper branch
@@ -307,7 +307,7 @@ void IIRHILB(_interp_execute)(IIRHILB() _q,
 //  _n      :   number of *input* samples
 //  _y      :   real-valued output array [size: 2*_n x 1]
 void IIRHILB(_interp_execute_block)(IIRHILB()    _q,
-                                    T complex *  _x,
+                                    LIQUID_XCOMPLEX(T) *  _x,
                                     unsigned int _n,
                                     T *          _y)
 {

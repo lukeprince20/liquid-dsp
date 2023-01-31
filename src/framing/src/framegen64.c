@@ -38,10 +38,10 @@
 struct framegen64_s {
     qpacketmodem    enc;                // packet encoder/modulator
     qpilotgen       pilotgen;           // pilot symbol generator
-    float complex   pn_sequence[64];    // 64-symbol p/n sequence
+    liquid_float_complex   pn_sequence[64];    // 64-symbol p/n sequence
     unsigned char   payload_dec[150];   // 600 = 150 bytes * 8 bits/bytes / 2 bits/symbol
-    float complex   payload_sym[600];   // modulated payload symbols
-    float complex   payload_tx[630];    // modulated payload symbols with pilots
+    liquid_float_complex   payload_sym[600];   // modulated payload symbols
+    liquid_float_complex   payload_tx[630];    // modulated payload symbols with pilots
     unsigned int    m;                  // filter delay (symbols)
     float           beta;               // filter excess bandwidth factor
     firinterp_crcf  interp;             // pulse-shaping filter/interpolator
@@ -144,7 +144,7 @@ int framegen64_print(framegen64 _q)
 int framegen64_execute(framegen64      _q,
                        unsigned char * _header,
                        unsigned char * _payload,
-                       float complex * _frame)
+                       liquid_float_complex * _frame)
 {
     unsigned int i;
 

@@ -234,7 +234,7 @@ IIRFILT() IIRFILT(_create_prototype)(liquid_iirdes_filtertype _ftype,
     // design filter (compute coefficients)
     liquid_iirdes(_ftype, _btype, _format, _order, _fc, _f0, _ap, _as, B, A);
 
-    // move coefficients to type-specific arrays (e.g. float complex)
+    // move coefficients to type-specific arrays (e.g. liquid_float_complex)
     TC * const Bc = (TC*) alloca(h_len*sizeof(TC));
     TC * const Ac = (TC*) alloca(h_len*sizeof(TC));
     unsigned int i;
@@ -278,7 +278,7 @@ IIRFILT() IIRFILT(_create_integrator)()
     // integrator digital zeros/poles/gain, [Pintelon:1990] Table II
     //
     // zeros, digital, integrator
-    float complex zdi[8] = {
+    liquid_float_complex zdi[8] = {
         1.175839 * -1.0f,
         3.371020 * cexpf(_Complex_I * M_PI / 180.0f * -125.1125f),
         3.371020 * cexpf(_Complex_I * M_PI / 180.0f *  125.1125f),
@@ -288,7 +288,7 @@ IIRFILT() IIRFILT(_create_integrator)()
         5.223966 * cexpf(_Complex_I * M_PI / 180.0f *   40.09347f),
         5.443743,};
     // poles, digital, integrator
-    float complex pdi[8] = {
+    liquid_float_complex pdi[8] = {
         0.5805235f * -1.0f,
         0.2332021f * cexpf(_Complex_I * M_PI / 180.0f * -114.0968f),
         0.2332021f * cexpf(_Complex_I * M_PI / 180.0f *  114.0968f),
@@ -298,7 +298,7 @@ IIRFILT() IIRFILT(_create_integrator)()
         0.1641457f * cexpf(_Complex_I * M_PI / 180.0f *   21.89539f),
         1.0f,};
     // gain, digital, integrator
-    float complex kdi = -1.89213380759321e-05f;
+    liquid_float_complex kdi = -1.89213380759321e-05f;
 
     // second-order sections
     // allocate 12 values for 4 second-order sections each with
@@ -327,7 +327,7 @@ IIRFILT() IIRFILT(_create_differentiator)()
     // differentiator digital zeros/poles/gain, [Pintelon:1990] Table IV
     //
     // zeros, digital, differentiator
-    float complex zdd[8] = {
+    liquid_float_complex zdd[8] = {
         1.702575f * -1.0f,
         5.877385f * cexpf(_Complex_I * M_PI / 180.0f * -221.4063f),
         5.877385f * cexpf(_Complex_I * M_PI / 180.0f *  221.4063f),
@@ -337,7 +337,7 @@ IIRFILT() IIRFILT(_create_differentiator)()
         5.350284f * cexpf(_Complex_I * M_PI / 180.0f *   66.88802f),
         1.0f,};
     // poles, digital, differentiator
-    float complex pdd[8] = {
+    liquid_float_complex pdd[8] = {
         0.8476936f * -1.0f,
         0.2990781f * cexpf(_Complex_I * M_PI / 180.0f * -125.5188f),
         0.2990781f * cexpf(_Complex_I * M_PI / 180.0f *  125.5188f),
@@ -347,7 +347,7 @@ IIRFILT() IIRFILT(_create_differentiator)()
         0.1958670f * cexpf(_Complex_I * M_PI / 180.0f *   40.51510f),
         0.1886088f,};
     // gain, digital, differentiator
-    float complex kdd = 2.09049284907492e-05f;
+    liquid_float_complex kdd = 2.09049284907492e-05f;
 
     // second-order sections
     // allocate 12 values for 4 second-order sections each with
@@ -654,15 +654,15 @@ unsigned int IIRFILT(_get_length)(IIRFILT() _q)
 //  _H      :   output frequency response
 int IIRFILT(_freqresponse)(IIRFILT()       _q,
                           float           _fc,
-                          float complex * _H)
+                          liquid_float_complex * _H)
 {
     unsigned int i;
-    float complex H = 0.0f;
+    liquid_float_complex H = 0.0f;
 
     if (_q->type == IIRFILT_TYPE_NORM) {
         // 
-        float complex Ha = 0.0f;
-        float complex Hb = 0.0f;
+        liquid_float_complex Ha = 0.0f;
+        liquid_float_complex Hb = 0.0f;
 
         for (i=0; i<_q->nb; i++)
             Hb += _q->b[i] * cexpf(_Complex_I*2*M_PI*_fc*i);
@@ -678,11 +678,11 @@ int IIRFILT(_freqresponse)(IIRFILT()       _q,
 
         // compute 3-point DFT for each second-order section
         for (i=0; i<_q->nsos; i++) {
-            float complex Hb =  _q->b[3*i+0] * cexpf(_Complex_I*2*M_PI*_fc*0) +
+            liquid_float_complex Hb =  _q->b[3*i+0] * cexpf(_Complex_I*2*M_PI*_fc*0) +
                                 _q->b[3*i+1] * cexpf(_Complex_I*2*M_PI*_fc*1) +
                                 _q->b[3*i+2] * cexpf(_Complex_I*2*M_PI*_fc*2);
 
-            float complex Ha =  _q->a[3*i+0] * cexpf(_Complex_I*2*M_PI*_fc*0) +
+            liquid_float_complex Ha =  _q->a[3*i+0] * cexpf(_Complex_I*2*M_PI*_fc*0) +
                                 _q->a[3*i+1] * cexpf(_Complex_I*2*M_PI*_fc*1) +
                                 _q->a[3*i+2] * cexpf(_Complex_I*2*M_PI*_fc*2);
 
@@ -699,7 +699,7 @@ int IIRFILT(_freqresponse)(IIRFILT()       _q,
 // Compute power spectral density response of filter object in dB
 float IIRFILT(_get_psd)(IIRFILT() _q, float _fc)
 {
-    float complex H;
+    liquid_float_complex H;
     IIRFILT(_freqresponse)(_q, _fc, &H);
     return 10*log10f( crealf(H * conjf(H)) );
 }

@@ -290,7 +290,7 @@ int qpacketmodem_decode_bits(qpacketmodem    _q,
 //  _frame      :   encoded/modulated payload symbols
 int qpacketmodem_encode(qpacketmodem          _q,
                         const unsigned char * _payload,
-                        float complex *       _frame)
+                        liquid_float_complex *       _frame)
 {
     // encode payload symbols into internal buffer
     qpacketmodem_encode_syms(_q, _payload, _q->payload_mod);
@@ -307,7 +307,7 @@ int qpacketmodem_encode(qpacketmodem          _q,
 //  _frame      :   encoded/modulated payload symbols
 //  _payload    :   recovered decoded payload bytes
 int qpacketmodem_decode(qpacketmodem    _q,
-                        float complex * _frame,
+                        liquid_float_complex * _frame,
                         unsigned char * _payload)
 {
     unsigned int i;
@@ -344,7 +344,7 @@ int qpacketmodem_decode(qpacketmodem    _q,
 //  _frame      :   encoded/modulated payload symbols
 //  _payload    :   recovered decoded payload bytes
 int qpacketmodem_decode_soft(qpacketmodem    _q,
-                             float complex * _frame,
+                             liquid_float_complex * _frame,
                              unsigned char * _payload)
 {
     unsigned int i;
@@ -377,7 +377,7 @@ int qpacketmodem_decode_soft(qpacketmodem    _q,
 //  _q          :   qpacketmodem object
 //  _frame      :   encoded/modulated symbol
 int qpacketmodem_decode_soft_sym(qpacketmodem  _q,
-                                 float complex _symbol)
+                                 liquid_float_complex _symbol)
 {
     unsigned int sym;
     modemcf_demodulate_soft(_q->mod_payload, _symbol, &sym, _q->payload_enc + _q->n);

@@ -29,7 +29,7 @@
 
 struct FIRHILB(_s) {
     T * h;                  // filter coefficients
-    T complex * hc;         // filter coefficients (complex)
+    LIQUID_XCOMPLEX(T) * hc; // filter coefficients (complex)
     unsigned int h_len;     // length of filter
     float as;               // filter stop-band attenuation [dB]
 
@@ -72,7 +72,7 @@ FIRHILB() FIRHILB(_create)(unsigned int _m,
     // set filter length and allocate memory for coefficients
     q->h_len = 4*(q->m) + 1;
     q->h     = (T *)         malloc((q->h_len)*sizeof(T));
-    q->hc    = (T complex *) malloc((q->h_len)*sizeof(T complex));
+    q->hc    = (LIQUID_XCOMPLEX(T) *) malloc((q->h_len)*sizeof(LIQUID_XCOMPLEX(T)));
 
     // allocate memory for quadrature filter component
     q->hq_len = 2*(q->m);
@@ -120,7 +120,7 @@ FIRHILB() FIRHILB(_copy)(FIRHILB() q_orig)
 
     // copy filter coefficients
     q_copy->h  = (T *)        liquid_malloc_copy(q_orig->h,  q_orig->h_len,  sizeof(T));
-    q_copy->hc = (T complex*) liquid_malloc_copy(q_orig->hc, q_orig->h_len,  sizeof(T complex));
+    q_copy->hc = (LIQUID_XCOMPLEX(T) *) liquid_malloc_copy(q_orig->hc, q_orig->h_len,  sizeof(LIQUID_XCOMPLEX(T)));
     q_copy->hq = (T *)        liquid_malloc_copy(q_orig->hq, q_orig->hq_len, sizeof(T));
 
     // copy objects and return
@@ -193,7 +193,7 @@ int FIRHILB(_reset)(FIRHILB() _q)
 //  _y      :   complex-valued output sample
 int FIRHILB(_r2c_execute)(FIRHILB()   _q,
                           T           _x,
-                          T complex * _y)
+                          LIQUID_XCOMPLEX(T) * _y)
 {
     T * r;  // buffer read pointer
     T yi;   // in-phase component
@@ -239,7 +239,7 @@ int FIRHILB(_r2c_execute)(FIRHILB()   _q,
 //  _y0     :   real-valued output sample, lower side-band retained
 //  _y1     :   real-valued output sample, upper side-band retained
 int FIRHILB(_c2r_execute)(FIRHILB() _q,
-                          T complex _x,
+                          LIQUID_XCOMPLEX(T) _x,
                           T *       _y0,
                           T *       _y1)
 {
@@ -286,7 +286,7 @@ int FIRHILB(_c2r_execute)(FIRHILB() _q,
 //  _y      :   complex-valued output sample
 int FIRHILB(_decim_execute)(FIRHILB()   _q,
                             T *         _x,
-                            T complex * _y)
+                            LIQUID_XCOMPLEX(T) * _y)
 {
     T * r;  // buffer read pointer
     T yi;   // in-phase component
@@ -302,7 +302,7 @@ int FIRHILB(_decim_execute)(FIRHILB()   _q,
     WINDOW(_index)(_q->w0, _q->m-1, &yi);
 
     // set return value
-    T complex v = yi + _Complex_I * yq;
+    LIQUID_XCOMPLEX(T) v = yi + _Complex_I * yq;
     *_y = _q->toggle ? -v : v;
 
     // toggle flag
@@ -319,7 +319,7 @@ int FIRHILB(_decim_execute)(FIRHILB()   _q,
 int FIRHILB(_decim_execute_block)(FIRHILB()    _q,
                                   T *          _x,
                                   unsigned int _n,
-                                  T complex *  _y)
+                                  LIQUID_XCOMPLEX(T) *  _y)
 {
     unsigned int i;
     for (i=0; i<_n; i++) {
@@ -334,7 +334,7 @@ int FIRHILB(_decim_execute_block)(FIRHILB()    _q,
 //  _y      :   complex-valued input sample
 //  _x      :   real-valued output array [size: 2 x 1]
 int FIRHILB(_interp_execute)(FIRHILB() _q,
-                             T complex _x,
+                             LIQUID_XCOMPLEX(T) _x,
                              T *       _y)
 {
     T * r;  // buffer read pointer
@@ -364,7 +364,7 @@ int FIRHILB(_interp_execute)(FIRHILB() _q,
 //  _n      :   number of *input* samples
 //  _y      :   real-valued output array [size: 2*_n x 1]
 int FIRHILB(_interp_execute_block)(FIRHILB()    _q,
-                                   T complex *  _x,
+                                   LIQUID_XCOMPLEX(T) *  _x,
                                    unsigned int _n,
                                    T *          _y)
 {
